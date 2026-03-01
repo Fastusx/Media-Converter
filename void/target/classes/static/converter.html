@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Converter arquivo</title>
+</head>
+<body>
+    
+<div id="file-card">
+    <label for="fileInput" style="cursor: pointer;">
+        <strong>Clique para selecionar</strong> ou arraste o vídeo aqui
+    </label>
+    <input id="fileInput" type="file" accept="video/*" style="display: none;">
+</div>   
+<ul>
+    <li><button onclick="converter('mp4')">Converter para .mp4</button></li>
+    <li><button onclick="converter('mov')">Converter para .mov</button></li>
+    <li><button onclick="converter('avi')">Converter para .avi</button></li>
+    <li><button onclick="converter('mkv')">Converter para .mkv</button></li>
+    <li><button onclick="converter('webm')">Converter para .webm</button></li>
+    <li><button onclick="converter('wmv')">Converter para .wmv</button></li>
+    <li><button onclick="converter('flv')">Converter para .flv</button></li>
+</ul>
+
+<script src="/script.js"></script>
+<a id="btn-download">
+    Baixar Vídeo Convertido
+</a>
+</body>
+</html>
