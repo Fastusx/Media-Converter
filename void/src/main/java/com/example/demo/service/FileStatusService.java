@@ -84,9 +84,13 @@ public class FileStatusService {
                     video.setCodec("mpeg4");
                     audio.setCodec("libmp3lame");
                 }
-                case "mov" -> {
+                case "mov", "mkv" -> {
                     video.setCodec("libx264");
                     audio.setCodec("aac");
+                }
+                case "wmv" -> {
+                    video.setCodec("msmpeg4v2");
+                    audio.setCodec("wmav2");
                 }
             }
             EncodingAttributes attributes = new EncodingAttributes();
