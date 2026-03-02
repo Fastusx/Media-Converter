@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.model.FileStatusDTO;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ws.schild.jave.Encoder;
@@ -66,10 +67,9 @@ public class FileStatusService {
 
             video.setBitRate(8000000);
             video.setFrameRate(30);
-            video.setSize(new VideoSize(1920,1080 ));
+            video.setSize(new VideoSize(1920, 1080));
 
             audio.setBitRate(128000);
-
 
             switch (goalFormat) {
                 case "mp4" -> {
@@ -115,6 +115,26 @@ public class FileStatusService {
 
     public FileStatusDTO statusCheck(String uuid) {
         return hashFile.getOrDefault(uuid, new FileStatusDTO("Arquivo não encontrado"));
+    }
+
+    @Scheduled(fixedRate = 1800000) //30 minutos
+    public void cleanUp() {
+        String outputPath = "C:/Users/Athur/Documents/output/";
+        File outputDir = new File(outputPath);
+        long currentTime = System.currentTimeMillis();
+            File[] files = outputDir.listFiles();
+
+        assert files != null;
+        for (File file : files) {
+            // se a data de modificação do arquivo for maior do que 2 minutos
+            if (currentTime - file.lastModified()> 3600000 ){ // 1 hora
+                    file.delete();
+                System.out.println("arquivo excluido! nome " + file.getName());
+                }
+            }
+            
+
+
     }
 
 }
