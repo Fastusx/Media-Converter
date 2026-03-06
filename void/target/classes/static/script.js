@@ -1,6 +1,12 @@
+let formatList = document.getElementById('format-list');
+let fileInput = document.getElementById('file-Input');
+let downloadButton = document.getElementById('btn-download');
+
 
 async function converter(GoalFormat) {
-    let fileInput = document.getElementById('fileInput')
+    downloadButton.style.display = "none";
+    downloadButton.href = "#";
+    
     let file = fileInput.files[0]
     let formData = new FormData();
     formData.append('file', file);
@@ -11,7 +17,9 @@ async function converter(GoalFormat) {
             body: formData
         });
         if (res.ok) {
+            fileInput.value = "";
             const uuid = await res.text()
+            formatList.style.display = "none";
             conversionStatus(uuid);
         } else {
             alert("Erro ao converter o arquivo.");
@@ -23,18 +31,24 @@ async function converter(GoalFormat) {
 }
 
 async function conversionStatus(uuid) {
-    const donwloadButton = document.getElementById('btn-download');
     const res = await fetch(`/application/status/${uuid}`);
     const data = await res.json();
     console.log("O JS leu isso aqui:", JSON.stringify(data));
 
     if (data.status === "FINALIZADO!"){
-        donwloadButton.href = data.downloadUrl;
+        downloadButton.style.display = "block";
+        downloadButton.href = data.downloadUrl;
              
         alert("Conversão concluída com sucesso!");
         
     }
     else if (data.status !== 'FINALIZADO!'){
         setTimeout(() => conversionStatus(uuid), 2000);
+
     }
 }
+fileInput.addEventListener("change", () => {
+    formatList.style.display = "block";
+});
+
+
