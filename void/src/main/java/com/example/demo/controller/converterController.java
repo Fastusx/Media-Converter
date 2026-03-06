@@ -44,16 +44,16 @@ public class converterController {
     public ResponseEntity<Resource> downloadFile(@PathVariable("id") String uuid) {
         try {
             FileStatusDTO dto = fileStatusService.statusCheck(uuid);
-            String formatoNovo = dto.getFileGoalFormat();
-            String nomeOriginal = dto.getFileOriginalName();
+            String newFormat = dto.getFileGoalFormat();
+            String originalName = dto.getFileOriginalName();
 
             // remove format of the filename
-            if (nomeOriginal.contains(".")) {
-                nomeOriginal = nomeOriginal.substring(0, nomeOriginal.lastIndexOf("."));
+            if (originalName.contains(".")) {
+                originalName = originalName.substring(0, originalName.lastIndexOf("."));
             }
 
             // filename without original format + final format
-            String nomeFinal = nomeOriginal + "." + formatoNovo;
+            String nomeFinal = originalName + "." + newFormat;
 
             File file = new File(outputPath + uuid + "." + dto.getFileGoalFormat());
 

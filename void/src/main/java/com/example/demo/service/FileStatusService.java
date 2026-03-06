@@ -84,18 +84,29 @@ public class FileStatusService {
                     video.setCodec("mpeg4");
                     audio.setCodec("libmp3lame");
                 }
-                case "mov", "mkv" -> {
+                case "mov" -> {
                     video.setCodec("libx264");
                     audio.setCodec("aac");
+                }
+                case "mkv" -> {
+                    video.setCodec("libx264");
+                    audio.setCodec("aac");
+                    goalFormat = "matroska";
+
                 }
                 case "wmv" -> {
                     video.setCodec("msmpeg4v2");
                     audio.setCodec("wmav2");
+                    goalFormat = "asf";
                 }
             }
+
+
             EncodingAttributes attributes = new EncodingAttributes();
             attributes.setAudioAttributes(audio);
             attributes.setVideoAttributes(video);
+
+
             attributes.setOutputFormat(goalFormat);
 
             MultimediaObject multimediaObjectInput = new MultimediaObject(input);
