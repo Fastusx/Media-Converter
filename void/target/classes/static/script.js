@@ -1,6 +1,7 @@
 let formatList = document.getElementById('format-list');
 let fileInput = document.getElementById('file-Input');
 let downloadButton = document.getElementById('btn-download');
+let labelInput = document.getElementById('label-Input');
 
 
 async function converter(GoalFormat) {
@@ -36,14 +37,25 @@ async function conversionStatus(uuid) {
     console.log("O JS leu isso aqui:", JSON.stringify(data));
 
     if (data.status === "FINALIZADO!"){
+        
         downloadButton.style.display = "block";
         downloadButton.href = data.downloadUrl;
-             
+        
+        labelInput.style.cursor = "pointer";
+        fileInput.disabled = false;
+
+        labelInput.innerHTML = `<strong>${data.status}</strong>`;
         alert("Conversão concluída com sucesso!");
         
     }
     else if (data.status !== 'FINALIZADO!'){
+        
+        labelInput.style.cursor = "wait";
+        fileInput.disabled = true;
+        labelInput.innerHTML = `<strong>${data.status} <strong>...</strong></strong>`;
+        
         setTimeout(() => conversionStatus(uuid), 2000);
+
 
     }
 }
