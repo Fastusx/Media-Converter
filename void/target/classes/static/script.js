@@ -2,6 +2,7 @@ let formatList = document.getElementById('format-list');
 let fileInput = document.getElementById('file-Input');
 let downloadButton = document.getElementById('btn-download');
 let labelInput = document.getElementById('label-Input');
+let body = document.querySelector('body');
 
 
 async function converter(GoalFormat) {
@@ -60,7 +61,28 @@ async function conversionStatus(uuid) {
     }
 }
 fileInput.addEventListener("change", () => {
-    formatList.style.display = "block";
+    formatList.style.display = "block";    
 });
 
+//Drag n Drop
+body.addEventListener('dragover', (e) => {
+    e.preventDefault();
+});
 
+body.addEventListener('drop', (e) => {
+    e.preventDefault();
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+        fileInput.files = files;
+        formatList.style.display = "block";
+
+    }
+});
+
+/*body.addEventListener('dragleave', (e) => {
+    e.preventDefault();
+    if (fileInput[0].files.length == 0) {
+        formatList.style.display = "none";
+    }
+    });
+*/
