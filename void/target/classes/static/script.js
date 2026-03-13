@@ -4,9 +4,14 @@ let downloadButton = document.getElementById('btn-download');
 let labelInput = document.getElementById('label-Input');
 let main = document.querySelector('main');
 let overlay =  document.getElementById('drag-overlay');
+let statusTimeOut = null;
 
 
 async function converter(GoalFormat) {
+    if (statusTimeOut){
+        clearTimeout(statusTimeOut);
+        statusTimeOut = null;
+    }
     downloadButton.style.display = "none";
     downloadButton.href = "#";
     
@@ -39,12 +44,13 @@ async function conversionStatus(uuid) {
     console.log("O JS leu isso aqui:", JSON.stringify(data));
 
     if (data.status === "FINALIZADO!"){
-        
+        console.trace("O botão está sendo mostrado agora por causa deste UUID:", uuid);
         downloadButton.style.display = "block";
         downloadButton.href = data.downloadUrl;
         
         labelInput.style.cursor = "pointer";
         fileInput.disabled = false;
+        fileInput.value = "";
 
         labelInput.innerHTML = `<strong>${data.status}</strong>`;
         alert("Conversão concluída com sucesso!");
@@ -56,17 +62,25 @@ async function conversionStatus(uuid) {
         fileInput.disabled = true;
         labelInput.innerHTML = `<strong>${data.status} <strong>...</strong></strong>`;
         
-        setTimeout(() => conversionStatus(uuid), 2000);
+       statusTimeOut = setTimeout(() => conversionStatus(uuid), 2000);
 
 
     }
 }
+
 fileInput.addEventListener("change", () => {
+    if (statusTimeOut){
+        clearTimeout(statusTimeOut);
+        statusTimeOut = null;
+    }
+    console.log("O arquivo foi selecionado:", fileInput.files[0]);
+    downloadButton.style.display = "none";
+    downloadButton.href = "#";
     formatList.style.display = "block";    
 });
 
 //Drag n Drop
-let dragCounter = 0; // Contador para evitar o "pisca-pisca"
+let dragCounter = 0; 
 
 main.addEventListener('dragenter', (e) => {
     e.preventDefault();
@@ -92,6 +106,8 @@ main.addEventListener('drop', (e) => {
     overlay.classList.remove('active');
 
     const files = e.dataTransfer.files;
+    downloadButton.style.display = "none";
+    downloadButton.href = "#";
     if (files.length > 0) {
         fileInput.files = files;
         formatList.style.display = "block";
