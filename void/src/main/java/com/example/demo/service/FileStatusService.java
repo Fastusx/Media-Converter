@@ -1,6 +1,8 @@
 package com.example.demo.service;
 
 import com.example.demo.model.FileStatusDTO;
+import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -24,6 +26,27 @@ import java.util.concurrent.ConcurrentHashMap;
 public class FileStatusService {
     private final Map<String, FileStatusDTO> hashFile = new ConcurrentHashMap<String, FileStatusDTO>();
 
+    @Value("${app.input.path}")
+   public String inputDir;
+
+    @Value("${app.output.path}")
+    public String outputDir;
+
+    public FileStatusService(){}
+     @PostConstruct
+     public void setupFolders(){
+         File input = new File(inputDir);
+         File output = new File(outputDir);
+         if (!input.exists()){
+            boolean isCreated =  input.mkdirs();
+             System.out.println("Pasta de Input criada? " + isCreated);
+         }
+         if (!output.exists()){
+             boolean isCreated = output.mkdirs();
+             System.out.println("Pasta de Output criada? " + isCreated);
+         }
+     }
+
     public String runProcess() {
         FileStatusDTO fileStatusDTO = new FileStatusDTO();
         fileStatusDTO.setStatus("INICIANDO!");
@@ -42,7 +65,7 @@ public class FileStatusService {
         try {
             String safeName = uuid + "_" + originalName;
             // define o caminho final
-            Path inputPath = Paths.get("C:/Users/Athur/Documents/input/" + safeName);
+            Path inputPath = Paths.get(inputDir, safeName);
 
             // Envia o arquivo pro caminho final
             Files.copy(file.getInputStream(), inputPath);
@@ -130,12 +153,12 @@ public class FileStatusService {
 
     @Scheduled(fixedRate = 1800000) //30 minutos
     public void cleanUp() {
-        String outputPath = "C:/Users/Athur/Documents/output/";
+        String outputPath = outputDir;
         File outputDir = new File(outputPath);
         long currentTime = System.currentTimeMillis();
             File[] files = outputDir.listFiles();
 
-        assert files != null;
+
         for (File file : files) {
             // se a data de modificação do arquivo for maior do que 2 minutos
             if (currentTime - file.lastModified()> 3600000 ){ // 1 hora
