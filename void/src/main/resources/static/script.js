@@ -2,7 +2,8 @@ let formatList = document.getElementById('format-list');
 let fileInput = document.getElementById('file-Input');
 let downloadButton = document.getElementById('btn-download');
 let labelInput = document.getElementById('label-Input');
-let body = document.querySelector('body');
+let main = document.querySelector('main');
+let overlay =  document.getElementById('drag-overlay');
 
 
 async function converter(GoalFormat) {
@@ -65,24 +66,34 @@ fileInput.addEventListener("change", () => {
 });
 
 //Drag n Drop
-body.addEventListener('dragover', (e) => {
+let dragCounter = 0; // Contador para evitar o "pisca-pisca"
+
+main.addEventListener('dragenter', (e) => {
     e.preventDefault();
+    dragCounter++;
+    overlay.classList.add('active');
 });
 
-body.addEventListener('drop', (e) => {
+main.addEventListener('dragleave', (e) => {
     e.preventDefault();
+    dragCounter--;
+    if (dragCounter === 0) {
+        overlay.classList.remove('active');
+    }
+});
+
+main.addEventListener('dragover', (e) => {
+    e.preventDefault(); 
+});
+
+main.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dragCounter = 0;
+    overlay.classList.remove('active');
+
     const files = e.dataTransfer.files;
     if (files.length > 0) {
         fileInput.files = files;
         formatList.style.display = "block";
-
     }
 });
-
-/*body.addEventListener('dragleave', (e) => {
-    e.preventDefault();
-    if (fileInput[0].files.length == 0) {
-        formatList.style.display = "none";
-    }
-    });
-*/

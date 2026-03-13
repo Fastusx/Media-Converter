@@ -4,16 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Converter arquivo</title>
+    <link rel="stylesheet" href="style.css">
 </head>
-<body style="height: 100vh;">
-    
-<div id="file-card">
-    <label id="label-Input" for="file-Input" style="cursor: pointer;">
+<body>
+
+<main >
+    <div id="drag-overlay">
+        <span id="overlay-message">Solte o arquivo aqui</span>
+    </div>
+        <div id="message">Solte o arquivo aqui</div>
+
+    <div id="file-card">
+    <label id="label-Input" for="file-Input">
         <strong>Clique para selecionar</strong> ou arraste o vídeo aqui
     </label>
-    <input id="file-Input" type="file" accept="video/*" style="display: none;">
+    <input id="file-Input" type="file" accept="video/*">
 </div>   
-<ul id="format-list" style="display: none;">
+<ul id="format-list">
     <li><button onclick="converter('mp4')">Converter para .mp4</button></li>
     <li><button onclick="converter('mov')">Converter para .mov</button></li>
     <li><button onclick="converter('avi')">Converter para .avi</button></li>
@@ -22,10 +29,10 @@
     <li><button onclick="converter('wmv')">Converter para .wmv</button></li>
 </ul>
 
-<a id="btn-download" href="#" style="display: none;">
+<a id="btn-download" href="#">
     Baixar Vídeo Convertido
 </a>
-
+</main>
 <script src="/script.js"></script>
 </body>
 </html>
