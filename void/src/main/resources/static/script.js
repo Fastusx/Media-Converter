@@ -4,6 +4,8 @@ let downloadButton = document.getElementById('btn-download');
 let labelInput = document.getElementById('label-Input');
 let main = document.querySelector('main');
 let overlay =  document.getElementById('drag-overlay');
+let loadingText = document.getElementById('loading-text');
+let divLoading = document.getElementById('div-loading');
 let statusTimeOut = null;
 
 
@@ -45,6 +47,7 @@ async function conversionStatus(uuid) {
 
     if (data.status === "FINALIZADO!"){
         console.trace("O botão está sendo mostrado agora por causa deste UUID:", uuid);
+        hideSpinner();
         downloadButton.style.display = "block";
         downloadButton.href = data.downloadUrl;
         
@@ -52,7 +55,7 @@ async function conversionStatus(uuid) {
         fileInput.disabled = false;
         fileInput.value = "";
 
-        labelInput.innerHTML = `<strong>${data.status}</strong>`;
+        labelInput.innerHTML = `<strong>Clique para selecionar</strong> ou arraste o vídeo aqui`;
         alert("Conversão concluída com sucesso!");
         
     }
@@ -60,8 +63,11 @@ async function conversionStatus(uuid) {
         
         labelInput.style.cursor = "wait";
         fileInput.disabled = true;
-        labelInput.innerHTML = `<strong>${data.status} <strong>...</strong></strong>`;
+        showSpinner(`${data.status}`);
         
+        
+        divLoading.style.display = "block";
+
        statusTimeOut = setTimeout(() => conversionStatus(uuid), 2000);
 
 
@@ -112,4 +118,15 @@ main.addEventListener('drop', (e) => {
         fileInput.files = files;
         formatList.style.display = "block";
     }
+
 });
+
+function hideSpinner(){
+    divLoading.style.display = "none";
+    loadingText.style.display = "none";
+}
+function showSpinner(mensagem){
+    divLoading.style.display = "block";
+    loadingText.style.display = "block";
+    loadingText.innerHTML = `<strong>${mensagem} <strong>...</strong></strong>`;
+}

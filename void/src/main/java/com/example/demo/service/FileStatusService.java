@@ -27,25 +27,27 @@ public class FileStatusService {
     private final Map<String, FileStatusDTO> hashFile = new ConcurrentHashMap<String, FileStatusDTO>();
 
     @Value("${app.input.path}")
-   public String inputDir;
+    public String inputDir;
 
     @Value("${app.output.path}")
     public String outputDir;
 
-    public FileStatusService(){}
-     @PostConstruct
-     public void setupFolders(){
-         File input = new File(inputDir);
-         File output = new File(outputDir);
-         if (!input.exists()){
-            boolean isCreated =  input.mkdirs();
-             System.out.println("Pasta de Input criada? " + isCreated);
-         }
-         if (!output.exists()){
-             boolean isCreated = output.mkdirs();
-             System.out.println("Pasta de Output criada? " + isCreated);
-         }
-     }
+    public FileStatusService() {
+    }
+
+    @PostConstruct
+    public void setupFolders() {
+        File input = new File(inputDir);
+        File output = new File(outputDir);
+        if (!input.exists()) {
+            boolean isCreated = input.mkdirs();
+            System.out.println("Pasta de Input criada? " + isCreated);
+        }
+        if (!output.exists()) {
+            boolean isCreated = output.mkdirs();
+            System.out.println("Pasta de Output criada? " + isCreated);
+        }
+    }
 
     public String runProcess() {
         FileStatusDTO fileStatusDTO = new FileStatusDTO();
@@ -124,11 +126,9 @@ public class FileStatusService {
                 }
             }
 
-
             EncodingAttributes attributes = new EncodingAttributes();
             attributes.setAudioAttributes(audio);
             attributes.setVideoAttributes(video);
-
 
             attributes.setOutputFormat(goalFormat);
 
@@ -151,23 +151,20 @@ public class FileStatusService {
         return hashFile.getOrDefault(uuid, new FileStatusDTO("Arquivo não encontrado"));
     }
 
-    @Scheduled(fixedRate = 1800000) //30 minutos
+    @Scheduled(fixedRate = 1800000) // 30 minutos
     public void cleanUp() {
         String outputPath = outputDir;
         File outputDir = new File(outputPath);
         long currentTime = System.currentTimeMillis();
-            File[] files = outputDir.listFiles();
-
+        File[] files = outputDir.listFiles();
 
         for (File file : files) {
             // se a data de modificação do arquivo for maior do que 2 minutos
-            if (currentTime - file.lastModified()> 3600000 ){ // 1 hora
-                    file.delete();
+            if (currentTime - file.lastModified() > 3600000) { // 1 hora
+                file.delete();
                 System.out.println("arquivo excluido! nome " + file.getName());
-                }
             }
-            
-
+        }
 
     }
 
