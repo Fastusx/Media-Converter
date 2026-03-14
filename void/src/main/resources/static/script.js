@@ -7,9 +7,11 @@ let overlay =  document.getElementById('drag-overlay');
 let loadingText = document.getElementById('loading-text');
 let divLoading = document.getElementById('div-loading');
 let statusTimeOut = null;
+let canOverlay = true;
 
 
 async function converter(GoalFormat) {
+    canOverlay = false;
     if (statusTimeOut){
         clearTimeout(statusTimeOut);
         statusTimeOut = null;
@@ -89,12 +91,14 @@ fileInput.addEventListener("change", () => {
 let dragCounter = 0; 
 
 main.addEventListener('dragenter', (e) => {
+    if (!canOverlay) return;
     e.preventDefault();
     dragCounter++;
     overlay.classList.add('active');
 });
 
 main.addEventListener('dragleave', (e) => {
+    if (!canOverlay) return;
     e.preventDefault();
     dragCounter--;
     if (dragCounter === 0) {
@@ -103,10 +107,12 @@ main.addEventListener('dragleave', (e) => {
 });
 
 main.addEventListener('dragover', (e) => {
+    if (!canOverlay) return;
     e.preventDefault(); 
 });
 
 main.addEventListener('drop', (e) => {
+    if (!canOverlay) return;
     e.preventDefault();
     dragCounter = 0;
     overlay.classList.remove('active');
