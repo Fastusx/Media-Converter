@@ -13,7 +13,6 @@ import ws.schild.jave.encode.AudioAttributes;
 import ws.schild.jave.encode.EncodingAttributes;
 import ws.schild.jave.encode.VideoAttributes;
 import ws.schild.jave.info.VideoSize;
-
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;

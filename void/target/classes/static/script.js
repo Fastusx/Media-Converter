@@ -6,9 +6,14 @@ let main = document.querySelector('main');
 let overlay =  document.getElementById('drag-overlay');
 let loadingText = document.getElementById('loading-text');
 let divLoading = document.getElementById('div-loading');
-let statusTimeOut = null;
 let canOverlay = true;
 
+const formatMap = {
+    video: ['mp4', 'mov', 'avi', 'mkv', 'webm', 'wmv'],
+    audio: ['mp3', 'wav', 'ogg', 'flac'],
+    image: ['png', 'jpg', 'webp', 'gif'],
+    document: ['pdf', 'txt']
+}
 
 async function converter(GoalFormat) {
     canOverlay = false;
@@ -77,15 +82,33 @@ async function conversionStatus(uuid) {
 }
 
 fileInput.addEventListener("change", () => {
-    if (statusTimeOut){
-        clearTimeout(statusTimeOut);
-        statusTimeOut = null;
-    }
-    console.log("O arquivo foi selecionado:", fileInput.files[0]);
+    formatList.innerHTML = '';
+    console.log('O código chegou aqui!')
+    const file = fileInput.files[0];
+    const fileType = file.type;
+    const category = fileType.split('/')[0];
+    console.log("O arquivo foi selecionado:", file);
+    console.log(fileType);
     downloadButton.style.display = "none";
     downloadButton.href = "#";
     formatList.style.display = "block";    
+    generateFormatList(category);
 });
+
+function generateFormatList(category){
+    const formatCategory = formatMap[category] || [];
+    formatCategory.forEach(element => {
+        const newListItem = document.createElement('li');
+        const newButton = document.createElement('button');
+        newButton.innerText = `Converter para .${element}`
+        newButton.addEventListener("click", () =>{
+            converter(element);
+    });
+        
+        newListItem.appendChild(newButton);
+        formatList.appendChild(newListItem);
+    });
+};
 
 //Drag n Drop
 let dragCounter = 0; 
