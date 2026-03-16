@@ -17,6 +17,7 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -24,6 +25,28 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class FileStatusService {
     private final Map<String, FileStatusDTO> hashFile = new ConcurrentHashMap<String, FileStatusDTO>();
+
+    private final List<String> audioFormats = List.of("mp3", "wav", "ogg", "flac");
+
+    private final Map<String, String> AUDIO_CODECS = Map.of(
+            "mp3", "libmp3lame",
+            "wav", "pcm_s16le",
+            "ogg", "libvorbis",
+            "flac", "flac",
+            "mp4", "libmp3lame",
+            "webm", "libvorbis",
+            "avi", "libmp3lame",
+            "mov", "aac",
+            "mkv", "aac",
+            "wmv", "wmav2");
+
+    private final Map<String, String> VIDEO_CODECS = Map.of(
+            "mp4", "libx264",
+            "webm", "libvpx",
+            "avi", "mpeg4",
+            "mov", "libx264",
+            "mkv", "libx264",
+            "wmv", "msmpeg4v2");
 
     @Value("${app.input.path}")
     public String inputDir;
@@ -76,6 +99,66 @@ public class FileStatusService {
             status.setStatus("ERRO AO GRAVAR!");
             throw new RuntimeException("Erro ao salvar arquivo no disco: " + e.getMessage());
         }
+    }
+
+    public EncodingAttributes SetEncodingAttributes(File file, String goalFormat) {
+        VideoAttributes videoAttributes;
+        AudioAttributes audioAttributes;
+        EncodingAttributes attributes = new EncodingAttributes();
+
+        String fileName = file.getName();
+        String fileFormat = fileName.substring(fileName.lastIndexOf("."));
+
+        if (VIDEO_CODECS.containsKey(fileFormat)) {
+            videoAttributes = setVideoAttributes(file, goalFormat);
+            audioAttributes = setAudioAttributes(file, goalFormat);
+            attributes.setVideoAttributes(videoAttributes);
+            attributes.setAudioAttributes(audioAttributes);
+        } else {
+            if (audioFormats.contains(fileFormat)) {
+                audioAttributes = setAudioAttributes(file, goalFormat);
+                attributes.setAudioAttributes(audioAttributes);
+            }
+        }
+
+        attributes.setOutputFormat(goalFormat);
+        return attributes;
+    }
+
+    public VideoAttributes setVideoAttributes(File file, String goalFormat) {
+        VideoAttributes videoAttributes = new VideoAttributes();
+        String fileName = file.getName();
+        String fileFormat = fileName.substring(fileName.lastIndexOf(".") + 1);
+        String codecVideo = "";
+
+        if (VIDEO_CODECS.get(fileFormat) == null)
+            return videoAttributes;
+        else {
+            codecVideo = VIDEO_CODECS.get(goalFormat);
+            videoAttributes.setCodec(codecVideo);
+            videoAttributes.setBitRate(8000000);
+            videoAttributes.setFrameRate(30);
+            videoAttributes.setSize(new VideoSize(1920, 1080));
+        }
+
+        return videoAttributes;
+    }
+
+    public AudioAttributes setAudioAttributes(File file, String goalFormat) {
+        AudioAttributes audioAttributes = new AudioAttributes();
+
+        String fileName = file.getName();
+        String fileFormat = fileName.substring(fileName.lastIndexOf(".") + 1);
+
+        String codec = "";
+
+        if (AUDIO_CODECS.get(fileFormat) != null)
+            codec = AUDIO_CODECS.get(goalFormat);
+
+        audioAttributes.setCodec(codec);
+        audioAttributes.setBitRate(128000);
+
+        return audioAttributes;
     }
 
     @Async
