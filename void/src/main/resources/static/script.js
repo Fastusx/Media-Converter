@@ -17,10 +17,6 @@ const formatMap = {
 
 async function converter(GoalFormat) {
     canOverlay = false;
-    if (statusTimeOut){
-        clearTimeout(statusTimeOut);
-        statusTimeOut = null;
-    }
     downloadButton.style.display = "none";
     downloadButton.href = "#";
     

@@ -38,7 +38,8 @@ public class FileStatusService {
             "avi", "libmp3lame",
             "mov", "aac",
             "mkv", "aac",
-            "wmv", "wmav2");
+            "wmv", "wmav2"
+    );
 
     private final Map<String, String> VIDEO_CODECS = Map.of(
             "mp4", "libx264",
@@ -46,7 +47,13 @@ public class FileStatusService {
             "avi", "mpeg4",
             "mov", "libx264",
             "mkv", "libx264",
-            "wmv", "msmpeg4v2");
+            "wmv", "msmpeg4v2"
+    );
+
+    private final Map<String, String> FORMAT_ALIAS = Map.of(
+            "mkv", "matroska",
+            "wmv", "asf"
+    );
 
     @Value("${app.input.path}")
     public String inputDir;
@@ -101,19 +108,23 @@ public class FileStatusService {
         }
     }
 
-    public EncodingAttributes SetEncodingAttributes(File file, String goalFormat) {
+    public EncodingAttributes setEncodingAttributes(File file, String goalFormat) {
         VideoAttributes videoAttributes;
         AudioAttributes audioAttributes;
         EncodingAttributes attributes = new EncodingAttributes();
 
         String fileName = file.getName();
-        String fileFormat = fileName.substring(fileName.lastIndexOf("."));
+        String fileFormat = fileName.substring(fileName.lastIndexOf(".") + 1);
+
+        if (FORMAT_ALIAS.containsKey(goalFormat)) goalFormat = FORMAT_ALIAS.get(goalFormat);
 
         if (VIDEO_CODECS.containsKey(fileFormat)) {
             videoAttributes = setVideoAttributes(file, goalFormat);
             audioAttributes = setAudioAttributes(file, goalFormat);
+
             attributes.setVideoAttributes(videoAttributes);
             attributes.setAudioAttributes(audioAttributes);
+
         } else {
             if (audioFormats.contains(fileFormat)) {
                 audioAttributes = setAudioAttributes(file, goalFormat);
@@ -169,59 +180,19 @@ public class FileStatusService {
 
         try {
 
-            VideoAttributes video = new VideoAttributes();
-            AudioAttributes audio = new AudioAttributes();
-
-            video.setBitRate(8000000);
-            video.setFrameRate(30);
-            video.setSize(new VideoSize(1920, 1080));
-
-            audio.setBitRate(128000);
-
-            switch (goalFormat) {
-                case "mp4" -> {
-                    video.setCodec("libx264");
-                    audio.setCodec("libmp3lame");
-                }
-                case "webm" -> {
-                    video.setCodec("libvpx");
-                    audio.setCodec("libvorbis");
-                }
-                case "avi" -> {
-                    video.setCodec("mpeg4");
-                    audio.setCodec("libmp3lame");
-                }
-                case "mov" -> {
-                    video.setCodec("libx264");
-                    audio.setCodec("aac");
-                }
-                case "mkv" -> {
-                    video.setCodec("libx264");
-                    audio.setCodec("aac");
-                    goalFormat = "matroska";
-
-                }
-                case "wmv" -> {
-                    video.setCodec("msmpeg4v2");
-                    audio.setCodec("wmav2");
-                    goalFormat = "asf";
-                }
-            }
-
-            EncodingAttributes attributes = new EncodingAttributes();
-            attributes.setAudioAttributes(audio);
-            attributes.setVideoAttributes(video);
-
-            attributes.setOutputFormat(goalFormat);
+            EncodingAttributes attributes = setEncodingAttributes(input, goalFormat);
 
             MultimediaObject multimediaObjectInput = new MultimediaObject(input);
 
             Encoder encoder = new Encoder();
             encoder.encode(multimediaObjectInput, output, attributes);
+
             status.setStatus("FINALIZADO!");
             status.setDownloadUrl("/application/download/" + uuid);
+
             System.out.println("Sucesso! Arquivo salvo em " + output.getAbsolutePath());
             System.out.println(status.getStatus());
+
             input.delete();
         } catch (Exception e) {
             System.err.println("Erro na conversão: " + e.getMessage());
@@ -233,7 +204,7 @@ public class FileStatusService {
         return hashFile.getOrDefault(uuid, new FileStatusDTO("Arquivo não encontrado"));
     }
 
-    @Scheduled(fixedRate = 1800000) // 30 minutos
+    @Scheduled(fixedRate = 1800000) // thirty minutes
     public void cleanUp() {
         String outputPath = outputDir;
         File outputDir = new File(outputPath);
@@ -241,7 +212,7 @@ public class FileStatusService {
         File[] files = outputDir.listFiles();
 
         for (File file : files) {
-            // se a data de modificação do arquivo for maior do que 2 minutos
+            // if the file's modification date be greater than 2 minutes
             if (currentTime - file.lastModified() > 3600000) { // 1 hora
                 file.delete();
                 System.out.println("arquivo excluido! nome " + file.getName());
