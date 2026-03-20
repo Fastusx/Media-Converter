@@ -13,6 +13,10 @@ import ws.schild.jave.encode.AudioAttributes;
 import ws.schild.jave.encode.EncodingAttributes;
 import ws.schild.jave.encode.VideoAttributes;
 import ws.schild.jave.info.VideoSize;
+
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -50,6 +54,7 @@ public class FileStatusService {
             "wmv", "msmpeg4v2"
     );
 
+    private final List<String> imageFormats = List.of("png", "jpg", "webp", "gif");
     private final Map<String, String> FORMAT_ALIAS = Map.of(
             "mkv", "matroska",
             "wmv", "asf"
@@ -177,8 +182,24 @@ public class FileStatusService {
         FileStatusDTO status = hashFile.get(uuid);
         status.setStatus("PROCESSANDO!");
         status.setFileGoalFormat(goalFormat);
+        BufferedImage image;
 
         try {
+            if (imageFormats.contains(goalFormat)) {
+                image = ImageIO.read(input);
+                if (goalFormat.equals("jpg") || goalFormat.equals("jpeg")){
+                    BufferedImage rgbImage = new BufferedImage(image.getWidth(), image.getHeight(),BufferedImage.TYPE_INT_RGB);
+                    rgbImage.createGraphics().drawImage(image,0,0, Color.WHITE, null);
+                    image = rgbImage;
+
+                }
+                ImageIO.write(image,goalFormat,output);
+                status.setDownloadUrl("/application/download/" + uuid);
+                status.setStatus("FINALIZADO!");
+                input.delete();
+                return;
+
+            }
 
             EncodingAttributes attributes = setEncodingAttributes(input, goalFormat);
 

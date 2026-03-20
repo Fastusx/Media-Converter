@@ -27,6 +27,7 @@ public class converterController {
     @PostMapping("/convert")
     public ResponseEntity<String> convert(@RequestParam("file") MultipartFile file,
             @RequestParam("format") String fileFormat) throws IOException {
+
         String uuid = fileStatusService.runProcess();
         File inputFile = fileStatusService.record(file, uuid);
         File outputFile = new File(outputPath + uuid + "." + fileFormat);
