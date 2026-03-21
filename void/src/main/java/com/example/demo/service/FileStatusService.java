@@ -21,7 +21,6 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -45,7 +44,6 @@ public class FileStatusService {
             "mkv", "aac",
             "wmv", "wmav2"
 
-
     );
 
     private final Map<String, String> VIDEO_CODECS = Map.of(
@@ -55,14 +53,12 @@ public class FileStatusService {
             "mov", "libx264",
             "mkv", "libx264",
             "wmv", "msmpeg4v2",
-            "webp", "libwebp"
-    );
+            "webp", "libwebp");
 
     private final List<String> imageFormats = List.of("png", "jpg", "gif");
     private final Map<String, String> FORMAT_ALIAS = Map.of(
             "mkv", "matroska",
-            "wmv", "asf"
-    );
+            "wmv", "asf");
 
     @Value("${app.input.path}")
     public String inputDir;
@@ -125,7 +121,8 @@ public class FileStatusService {
         String fileName = file.getName();
         String fileFormat = fileName.substring(fileName.lastIndexOf(".") + 1);
 
-        if (FORMAT_ALIAS.containsKey(goalFormat)) goalFormat = FORMAT_ALIAS.get(goalFormat);
+        if (FORMAT_ALIAS.containsKey(goalFormat))
+            goalFormat = FORMAT_ALIAS.get(goalFormat);
 
         if (VIDEO_CODECS.containsKey(fileFormat)) {
 
@@ -140,8 +137,8 @@ public class FileStatusService {
                 audioAttributes = setAudioAttributes(file, goalFormat);
                 attributes.setAudioAttributes(audioAttributes);
             }
-            if (imageFormats.contains(fileFormat)){
-                videoAttributes = setVideoAttributes(file,goalFormat);
+            if (imageFormats.contains(fileFormat)) {
+                videoAttributes = setVideoAttributes(file, goalFormat);
                 attributes.setVideoAttributes(videoAttributes);
             }
         }
@@ -163,9 +160,9 @@ public class FileStatusService {
             videoAttributes.setCodec(codecVideo);
             videoAttributes.setBitRate(8000000);
             videoAttributes.setFrameRate(30);
-            if (!goalFormat.equalsIgnoreCase("webp")){
-            videoAttributes.setSize(new VideoSize(1920, 1080));
-        }
+            if (!goalFormat.equalsIgnoreCase("webp")) {
+                videoAttributes.setSize(new VideoSize(1920, 1080));
+            }
         }
 
         return videoAttributes;
@@ -199,13 +196,14 @@ public class FileStatusService {
         try {
             if (imageFormats.contains(goalFormat)) {
                 image = ImageIO.read(input);
-                if (goalFormat.equals("jpg") || goalFormat.equals("jpeg")){
-                    BufferedImage rgbImage = new BufferedImage(image.getWidth(), image.getHeight(),BufferedImage.TYPE_INT_RGB);
-                    rgbImage.createGraphics().drawImage(image,0,0, Color.WHITE, null);
+                if (goalFormat.equals("jpg") || goalFormat.equals("jpeg")) {
+                    BufferedImage rgbImage = new BufferedImage(image.getWidth(), image.getHeight(),
+                            BufferedImage.TYPE_INT_RGB);
+                    rgbImage.createGraphics().drawImage(image, 0, 0, Color.WHITE, null);
                     image = rgbImage;
 
                 }
-                ImageIO.write(image,goalFormat,output);
+                ImageIO.write(image, goalFormat, output);
                 status.setDownloadUrl("/application/download/" + uuid);
                 status.setStatus("FINALIZADO!");
                 input.delete();
