@@ -21,6 +21,7 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -43,6 +44,8 @@ public class FileStatusService {
             "mov", "aac",
             "mkv", "aac",
             "wmv", "wmav2"
+
+
     );
 
     private final Map<String, String> VIDEO_CODECS = Map.of(
@@ -51,10 +54,11 @@ public class FileStatusService {
             "avi", "mpeg4",
             "mov", "libx264",
             "mkv", "libx264",
-            "wmv", "msmpeg4v2"
+            "wmv", "msmpeg4v2",
+            "webp", "libwebp"
     );
 
-    private final List<String> imageFormats = List.of("png", "jpg", "webp", "gif");
+    private final List<String> imageFormats = List.of("png", "jpg", "gif");
     private final Map<String, String> FORMAT_ALIAS = Map.of(
             "mkv", "matroska",
             "wmv", "asf"
@@ -124,6 +128,7 @@ public class FileStatusService {
         if (FORMAT_ALIAS.containsKey(goalFormat)) goalFormat = FORMAT_ALIAS.get(goalFormat);
 
         if (VIDEO_CODECS.containsKey(fileFormat)) {
+
             videoAttributes = setVideoAttributes(file, goalFormat);
             audioAttributes = setAudioAttributes(file, goalFormat);
 
@@ -134,6 +139,10 @@ public class FileStatusService {
             if (audioFormats.contains(fileFormat)) {
                 audioAttributes = setAudioAttributes(file, goalFormat);
                 attributes.setAudioAttributes(audioAttributes);
+            }
+            if (imageFormats.contains(fileFormat)){
+                videoAttributes = setVideoAttributes(file,goalFormat);
+                attributes.setVideoAttributes(videoAttributes);
             }
         }
 
@@ -147,14 +156,16 @@ public class FileStatusService {
         String fileFormat = fileName.substring(fileName.lastIndexOf(".") + 1);
         String codecVideo = "";
 
-        if (VIDEO_CODECS.get(fileFormat) == null)
+        if (!VIDEO_CODECS.containsKey(fileFormat) && !imageFormats.contains(fileFormat))
             return videoAttributes;
         else {
             codecVideo = VIDEO_CODECS.get(goalFormat);
             videoAttributes.setCodec(codecVideo);
             videoAttributes.setBitRate(8000000);
             videoAttributes.setFrameRate(30);
+            if (!goalFormat.equalsIgnoreCase("webp")){
             videoAttributes.setSize(new VideoSize(1920, 1080));
+        }
         }
 
         return videoAttributes;
@@ -179,6 +190,7 @@ public class FileStatusService {
 
     @Async
     public void convert(File input, File output, String goalFormat, String uuid) {
+        ImageIO.scanForPlugins();
         FileStatusDTO status = hashFile.get(uuid);
         status.setStatus("PROCESSANDO!");
         status.setFileGoalFormat(goalFormat);
