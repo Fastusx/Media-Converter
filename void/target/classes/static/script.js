@@ -96,6 +96,7 @@ function generateFormatList(category){
     formatCategory.forEach(element => {
         const newListItem = document.createElement('li');
         const newButton = document.createElement('button');
+        newListItem.classList.add('format-item');
         newButton.innerText = `Converter para .${element}`
         newButton.addEventListener("click", () =>{
             converter(element);
