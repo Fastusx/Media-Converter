@@ -1,0 +1,5 @@
+com\example\demo\MediaConverterApplication.class
+com\example\demo\service\CustomFFMPEGLocator.class
+com\example\demo\controller\converterController.class
+com\example\demo\model\FileStatusDTO.class
+com\example\demo\service\FileStatusService.class

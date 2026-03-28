@@ -17,13 +17,14 @@ import ws.schild.jave.info.VideoSize;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
@@ -53,7 +54,8 @@ public class FileStatusService {
             "mov", "libx264",
             "mkv", "libx264",
             "wmv", "msmpeg4v2",
-            "webp", "libwebp");
+            "webp", "libwebp",
+            "avif", "libaom-av1");
 
     private final List<String> imageFormats = List.of("png", "jpg", "gif");
     private final Map<String, String> FORMAT_ALIAS = Map.of(
@@ -65,6 +67,9 @@ public class FileStatusService {
 
     @Value("${app.output.path}")
     public String outputDir;
+
+    @Value("${app.ffmpeg.path}")
+    public String ffmpegPath;
 
     public FileStatusService() {
     }
@@ -160,7 +165,7 @@ public class FileStatusService {
             videoAttributes.setCodec(codecVideo);
             videoAttributes.setBitRate(8000000);
             videoAttributes.setFrameRate(30);
-            if (!goalFormat.equalsIgnoreCase("webp")) {
+            if (!goalFormat.equalsIgnoreCase("webp") && !goalFormat.equalsIgnoreCase("avif")) {
                 videoAttributes.setSize(new VideoSize(1920, 1080));
             }
         }
@@ -184,18 +189,22 @@ public class FileStatusService {
 
         return audioAttributes;
     }
-
+/*
     @Async
     public void convert(File input, File output, String goalFormat, String uuid) {
+
         ImageIO.scanForPlugins();
         FileStatusDTO status = hashFile.get(uuid);
         status.setStatus("PROCESSANDO!");
         status.setFileGoalFormat(goalFormat);
+        String inputName = input.getName();
+        String inputFormat = inputName.substring(inputName.lastIndexOf(".") + 1);
         BufferedImage image;
 
         try {
-            if (imageFormats.contains(goalFormat)) {
+            if (imageFormats.contains(goalFormat) && !inputFormat.equalsIgnoreCase("avif") && !imageFormats.contains("avif")){
                 image = ImageIO.read(input);
+                System.out.println(image);
                 if (goalFormat.equals("jpg") || goalFormat.equals("jpeg")) {
                     BufferedImage rgbImage = new BufferedImage(image.getWidth(), image.getHeight(),
                             BufferedImage.TYPE_INT_RGB);
@@ -203,6 +212,7 @@ public class FileStatusService {
                     image = rgbImage;
 
                 }
+
                 ImageIO.write(image, goalFormat, output);
                 status.setDownloadUrl("/application/download/" + uuid);
                 status.setStatus("FINALIZADO!");
@@ -215,7 +225,11 @@ public class FileStatusService {
 
             MultimediaObject multimediaObjectInput = new MultimediaObject(input);
 
-            Encoder encoder = new Encoder();
+            CustomFFMPEGLocator ffmpegFull = new CustomFFMPEGLocator(ffmpegPath);
+
+            Encoder encoder = new Encoder(ffmpegFull);
+            System.out.println("Formatos de vídeo suportados pelo binário: " + Arrays.toString(encoder.getVideoEncoders()));
+
             encoder.encode(multimediaObjectInput, output, attributes);
 
             status.setStatus("FINALIZADO!");
@@ -230,7 +244,60 @@ public class FileStatusService {
         }
 
     }
+*/
+@Async
+public void convert(File input, File output, String goalFormat, String uuid) {
+    FileStatusDTO status = hashFile.get(uuid);
+    status.setStatus("PROCESSANDO!");
+    status.setFileGoalFormat(goalFormat);
 
+    try {
+        //terminal command line to Ffmpeg conversion
+        List<String> command = new ArrayList<>();
+
+        command.add(ffmpegPath);
+        command.add("-y"); //positive answer for everything
+        command.add("-i"); //
+        command.add(input.getAbsolutePath());
+        command.add("-pix_fmt"); //pixel format setted
+        command.add("yuv420p"); //codec
+
+        command.add(output.getAbsolutePath());
+
+        ProcessBuilder pb = new ProcessBuilder(command);
+        pb.redirectErrorStream(true);
+        Process process = pb.start();
+
+
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                System.out.println("FFmpeg Log: " + line);
+            }
+        }
+
+        int exitCode = process.waitFor();
+
+
+        if (exitCode == 0) {
+            status.setDownloadUrl("/application/download/" + uuid);
+            status.setStatus("FINALIZADO!");
+            System.out.println("Conversão concluída com sucesso!");
+        } else {
+            status.setStatus("ERRO NA CONVERSÃO!");
+            System.err.println("O FFmpeg retornou erro. Código: " + exitCode);
+        }
+
+        if (input.exists()) {
+            input.delete();
+        }
+
+    } catch (Exception e) {
+        status.setStatus("ERRO CRÍTICO!");
+        System.err.println("Falha ao tentar rodar o FFmpeg: " + e.getMessage());
+        e.printStackTrace();
+    }
+}
     public FileStatusDTO statusCheck(String uuid) {
         return hashFile.getOrDefault(uuid, new FileStatusDTO("Arquivo não encontrado"));
     }

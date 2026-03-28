@@ -12,8 +12,9 @@ public class FileStatusDTO {
 
     public FileStatusDTO() {
     }
-    public FileStatusDTO(String status){
-        this.status = status;
 
+    public FileStatusDTO(String status) {
+        this.status = status;
     }
+
 }
