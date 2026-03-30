@@ -3,9 +3,12 @@ let fileInput = document.getElementById('file-Input');
 let downloadButton = document.getElementById('btn-download');
 let labelInput = document.getElementById('label-Input');
 let main = document.querySelector('main');
+let body = document.querySelector('body');
 let overlay =  document.getElementById('drag-overlay');
 let loadingText = document.getElementById('loading-text');
 let divLoading = document.getElementById('div-loading');
+let loadingContainer = document.getElementById('loading-container');
+let filename = document.getElementById('file-name');
 let canOverlay = true;
 
 const formatMap = {
@@ -85,6 +88,16 @@ fileInput.addEventListener("change", () => {
     const category = fileType.split('/')[0];
     console.log("O arquivo foi selecionado:", file);
     console.log(fileType);
+    if (fileInput.files.length> 0) {
+        let temporaryFileName = file.name;
+        let extension = temporaryFileName.substring(temporaryFileName.lastIndexOf('.') + 1);
+        if (temporaryFileName.length > 40) {
+            temporaryFileName = temporaryFileName.substring(0, 32) + "... " + extension;
+        }
+        console.log('Arquivo existe')
+        filename.style.display = 'block';
+        filename.innerText = temporaryFileName;
+    }
     downloadButton.style.display = "none";
     downloadButton.href = "#";
     formatList.style.display = "block";    
@@ -110,14 +123,14 @@ function generateFormatList(category){
 //Drag n Drop
 let dragCounter = 0; 
 
-main.addEventListener('dragenter', (e) => {
+body.addEventListener('dragenter', (e) => {
     if (!canOverlay) return;
     e.preventDefault();
     dragCounter++;
     overlay.classList.add('active');
 });
 
-main.addEventListener('dragleave', (e) => {
+body.addEventListener('dragleave', (e) => {
     if (!canOverlay) return;
     e.preventDefault();
     dragCounter--;
@@ -126,12 +139,12 @@ main.addEventListener('dragleave', (e) => {
     }
 });
 
-main.addEventListener('dragover', (e) => {
+body.addEventListener('dragover', (e) => {
     if (!canOverlay) return;
     e.preventDefault(); 
 });
 
-main.addEventListener('drop', (e) => {
+body.addEventListener('drop', (e) => {
     if (!canOverlay) return;
     e.preventDefault();
     dragCounter = 0;
@@ -148,11 +161,13 @@ main.addEventListener('drop', (e) => {
 });
 
 function hideSpinner(){
-    divLoading.style.display = "none";
-    loadingText.style.display = "none";
+    loadingContainer.style.display = "none";
+    main.style.height = "auto";
+
 }
 function showSpinner(mensagem){
-    divLoading.style.display = "block";
+    loadingContainer.style.display = "flex";
     loadingText.style.display = "block";
     loadingText.innerHTML = `<strong>${mensagem} <strong>...</strong></strong>`;
+    main.style.height = "150px";
 }
