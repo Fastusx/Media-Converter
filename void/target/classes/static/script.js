@@ -14,7 +14,7 @@ let canOverlay = true;
 const formatMap = {
     video: ['mp4', 'mov', 'avi', 'mkv', 'webm', 'wmv'],
     audio: ['mp3', 'wav', 'ogg', 'flac'],
-    image: ['png', 'jpg', 'webp', 'gif'],
+    image: ['png', 'jpg', 'webp', 'gif', 'avif'],
     document: ['pdf', 'txt']
 }
 
@@ -165,9 +165,9 @@ function hideSpinner(){
     main.style.height = "auto";
 
 }
-function showSpinner(mensagem){
+function showSpinner(message){
     loadingContainer.style.display = "flex";
     loadingText.style.display = "block";
-    loadingText.innerHTML = `<strong>${mensagem} <strong>...</strong></strong>`;
+    loadingText.innerHTML = `<strong>${message} <strong>...</strong></strong>`;
     main.style.height = "150px";
 }

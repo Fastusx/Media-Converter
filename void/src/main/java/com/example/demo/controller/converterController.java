@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import java.net.MalformedURLException;
@@ -22,7 +23,8 @@ public class converterController {
         this.fileStatusService = fileStatusService;
     }
 
-    String outputPath = "C:/Users/Athur/Documents/output/";
+    @Value("${app.output.path}")
+    public String outputPath;
 
     @PostMapping("/convert")
     public ResponseEntity<String> convert(@RequestParam("file") MultipartFile file,
