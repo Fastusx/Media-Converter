@@ -62,6 +62,9 @@ async function conversionStatus(uuid) {
         fileInput.value = "";
 
         labelInput.innerHTML = `<strong>Clique para selecionar</strong> ou arraste o vídeo aqui`;
+        
+        canOverlay = true;
+
         alert("Conversão concluída com sucesso!");
         
     }
@@ -146,18 +149,40 @@ body.addEventListener('dragover', (e) => {
 
 body.addEventListener('drop', (e) => {
     if (!canOverlay) return;
+    formatList.innerHTML = '';
     e.preventDefault();
+    
     dragCounter = 0;
     overlay.classList.remove('active');
-
+    
     const files = e.dataTransfer.files;
     downloadButton.style.display = "none";
     downloadButton.href = "#";
     if (files.length > 0) {
         fileInput.files = files;
+        const file = fileInput.files[0];
+        const fileType = file.type;
+        const category = fileType.split('/')[0];    
         formatList.style.display = "block";
-    }
+        
+        if (fileInput.files.length> 0) {
+        
+            let temporaryFileName = file.name;
+            let extension = temporaryFileName.substring(temporaryFileName.lastIndexOf('.') + 1);
+            if (temporaryFileName.length > 40) {
+                temporaryFileName = temporaryFileName.substring(0, 32) + "... " + extension;
+            }
+            console.log('Arquivo existe')
+            filename.style.display = 'block';
+            filename.innerText = temporaryFileName;
+        }
+        downloadButton.style.display = "none";
+        downloadButton.href = "#";
+        formatList.style.display = "block";    
+        generateFormatList(category);
 
+    }
+     
 });
 
 function hideSpinner(){
