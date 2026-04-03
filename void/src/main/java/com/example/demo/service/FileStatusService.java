@@ -7,11 +7,6 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import ws.schild.jave.encode.AudioAttributes;
-import ws.schild.jave.encode.EncodingAttributes;
-import ws.schild.jave.encode.VideoAttributes;
-import ws.schild.jave.info.VideoSize;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
@@ -26,36 +21,39 @@ import java.util.concurrent.ConcurrentHashMap;
 public class FileStatusService {
     private final Map<String, FileStatusDTO> hashFile = new ConcurrentHashMap<String, FileStatusDTO>();
 
-    private final List<String> audioFormats = List.of("mp3", "wav", "ogg", "flac");
-
-    private final Map<String, String> AUDIO_CODECS = Map.of(
-            "mp3", "libmp3lame",
-            "wav", "pcm_s16le",
-            "ogg", "libvorbis",
-            "flac", "flac",
-            "mp4", "libmp3lame",
-            "webm", "libvorbis",
-            "avi", "libmp3lame",
-            "mov", "aac",
-            "mkv", "aac",
-            "wmv", "wmav2"
-
-    );
-
-    private final Map<String, String> VIDEO_CODECS = Map.of(
-            "mp4", "libx264",
-            "webm", "libvpx",
-            "avi", "mpeg4",
-            "mov", "libx264",
-            "mkv", "libx264",
-            "wmv", "msmpeg4v2",
-            "webp", "libwebp",
-            "avif", "libaom-av1");
-
-    private final List<String> imageFormats = List.of("png", "jpg", "gif");
-    private final Map<String, String> FORMAT_ALIAS = Map.of(
-            "mkv", "matroska",
-            "wmv", "asf");
+    /*
+     * private final List<String> audioFormats = List.of("mp3", "wav", "ogg",
+     * "flac");
+     * 
+     * private final Map<String, String> AUDIO_CODECS = Map.of(
+     * "mp3", "libmp3lame",
+     * "wav", "pcm_s16le",
+     * "ogg", "libvorbis",
+     * "flac", "flac",
+     * "mp4", "libmp3lame",
+     * "webm", "libvorbis",
+     * "avi", "libmp3lame",
+     * "mov", "aac",
+     * "mkv", "aac",
+     * "wmv", "wmav2"
+     * 
+     * );
+     * 
+     * private final Map<String, String> VIDEO_CODECS = Map.of(
+     * "mp4", "libx264",
+     * "webm", "libvpx",
+     * "avi", "mpeg4",
+     * "mov", "libx264",
+     * "mkv", "libx264",
+     * "wmv", "msmpeg4v2",
+     * "webp", "libwebp",
+     * "avif", "libaom-av1");
+     * 
+     * private final List<String> imageFormats = List.of("png", "jpg", "gif");
+     * private final Map<String, String> FORMAT_ALIAS = Map.of(
+     * "mkv", "matroska",
+     * "wmv", "asf");
+     */
 
     @Value("${app.input.path}")
     public String inputDir;
@@ -112,7 +110,6 @@ public class FileStatusService {
             throw new RuntimeException("Erro ao salvar arquivo no disco: " + e.getMessage());
         }
     }
-
 
     /*
      * @Async
