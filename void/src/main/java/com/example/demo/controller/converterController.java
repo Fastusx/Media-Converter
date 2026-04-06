@@ -23,7 +23,7 @@ public class converterController {
         this.fileStatusService = fileStatusService;
     }
 
-    @Value("${app.output.path}")
+    @Value("${app.output.path:/app/arquivos-no-docker/convertidos}")
     public String outputPath;
 
     @PostMapping("/convert")

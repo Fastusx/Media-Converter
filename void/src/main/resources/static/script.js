@@ -14,7 +14,7 @@ let canOverlay = true;
 const formatMap = {
     video: ['mp4', 'mov', 'avi', 'mkv', 'webm', 'wmv'],
     audio: ['mp3', 'wav', 'ogg', 'flac'],
-    image: ['png', 'jpg', 'webp', 'gif', 'avif'],
+    image: ['png', 'jpeg', 'webp', 'gif', 'avif'],
     document: ['pdf', 'txt']
 }
 
@@ -89,6 +89,7 @@ fileInput.addEventListener("change", () => {
     const file = fileInput.files[0];
     const fileType = file.type;
     const category = fileType.split('/')[0];
+    const fileFormat = fileType.split('/')[1];
     console.log("O arquivo foi selecionado:", file);
     console.log(fileType);
     if (fileInput.files.length> 0) {
@@ -104,12 +105,13 @@ fileInput.addEventListener("change", () => {
     downloadButton.style.display = "none";
     downloadButton.href = "#";
     formatList.style.display = "block";    
-    generateFormatList(category);
+    generateFormatList(category, fileFormat);
 });
 
-function generateFormatList(category){
+function generateFormatList(category, fileFormat){
     const formatCategory = formatMap[category] || [];
     formatCategory.forEach(element => {
+        if (element === fileFormat) return;
         const newListItem = document.createElement('li');
         const newButton = document.createElement('button');
         newListItem.classList.add('format-item');
@@ -162,7 +164,8 @@ body.addEventListener('drop', (e) => {
         fileInput.files = files;
         const file = fileInput.files[0];
         const fileType = file.type;
-        const category = fileType.split('/')[0];    
+        const category = fileType.split('/')[0];
+        const fileFormat = fileType.split('/')[1];    
         formatList.style.display = "block";
         
         if (fileInput.files.length> 0) {
@@ -179,7 +182,7 @@ body.addEventListener('drop', (e) => {
         downloadButton.style.display = "none";
         downloadButton.href = "#";
         formatList.style.display = "block";    
-        generateFormatList(category);
+        generateFormatList(category, fileFormat);
 
     }
      

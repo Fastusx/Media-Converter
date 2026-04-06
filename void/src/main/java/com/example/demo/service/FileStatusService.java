@@ -55,13 +55,13 @@ public class FileStatusService {
      * "wmv", "asf");
      */
 
-    @Value("${app.input.path}")
+    @Value("${app.input.path:/app/arquivos-no-docker/uploads}")
     public String inputDir;
 
-    @Value("${app.output.path}")
+    @Value("${app.output.path:/app/arquivos-no-docker/convertidos}")
     public String outputDir;
 
-    @Value("${app.ffmpeg.path}")
+    @Value("${app.ffmpeg.path:ffmpeg}")
     public String ffmpegPath;
 
     public FileStatusService() {
