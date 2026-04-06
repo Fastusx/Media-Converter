@@ -1,0 +1,12 @@
+version: '3.8'
+services:
+  conversor-app:
+    build: .
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./local-archives:/app/tmp/convertidos
+    environment:
+      - APP_FFMPEG_PATH=ffmpeg
+      - APP_INPUT_PATH=/app/tmp/uploads
+      - APP_OUTPUT_PATH=/app/tmp/convertidos
