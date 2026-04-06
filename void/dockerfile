@@ -1,17 +1,12 @@
 FROM eclipse-temurin:17-jdk-alpine
 
-# 2. Instala o FFmpeg dentro do container
-# O comando 'apk' é o instalador de pacotes do Alpine Linux
 RUN apk add --no-cache ffmpeg
 
-# 3. Define a pasta onde o projeto vai morar dentro do Docker
 WORKDIR /app
 
 RUN mkdir -p /app/arquivos-no-docker/uploads /app/arquivos-no-docker/convertidos \
     && chmod -R 777 /app/arquivos-no-docker
 
-# 4. Copia o seu arquivo .jar gerado pelo Maven/Gradle para dentro do Docker
 COPY target/*.jar app.jar
 
-# 5. Comando para rodar a aplicação
 ENTRYPOINT ["java", "-jar", "app.jar"]
