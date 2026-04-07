@@ -9,12 +9,13 @@ import com.example.demo.service.FileStatusService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.io.File;
 import java.io.IOException;
 
 @RestController
-@RequestMapping("/application")
+
 
 public class converterController {
     private final FileStatusService fileStatusService;
@@ -25,6 +26,11 @@ public class converterController {
 
     @Value("${app.output.path:/app/arquivos-no-docker/convertidos}")
     public String outputPath;
+
+    @GetMapping("/")
+    public ModelAndView mainPage(){
+        return new ModelAndView("converter");
+    }
 
     @PostMapping("/convert")
     public ResponseEntity<String> convert(@RequestParam("file") MultipartFile file,

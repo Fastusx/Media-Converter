@@ -204,7 +204,7 @@ public class FileStatusService {
             int exitCode = process.waitFor();
 
             if (exitCode == 0) {
-                status.setDownloadUrl("/application/download/" + uuid);
+                status.setDownloadUrl("/download/" + uuid);
                 status.setStatus("FINALIZADO!");
                 System.out.println("Conversão concluída com sucesso!");
             } else {

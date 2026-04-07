@@ -28,7 +28,7 @@ async function converter(GoalFormat) {
     formData.append('file', file);
     formData.append('format', GoalFormat);
     try{
-        let res = await fetch('/application/convert', {
+        let res = await fetch('/convert', {
             method: 'POST',
             body: formData
         });
@@ -47,7 +47,7 @@ async function converter(GoalFormat) {
 }
 
 async function conversionStatus(uuid) {
-    const res = await fetch(`/application/status/${uuid}`);
+    const res = await fetch(`/status/${uuid}`);
     const data = await res.json();
     console.log("O JS leu isso aqui:", JSON.stringify(data));
 
