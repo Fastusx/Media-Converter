@@ -21,39 +21,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class FileStatusService {
     private final Map<String, FileStatusDTO> hashFile = new ConcurrentHashMap<String, FileStatusDTO>();
 
-    /*
-     * private final List<String> audioFormats = List.of("mp3", "wav", "ogg",
-     * "flac");
-     * 
-     * private final Map<String, String> AUDIO_CODECS = Map.of(
-     * "mp3", "libmp3lame",
-     * "wav", "pcm_s16le",
-     * "ogg", "libvorbis",
-     * "flac", "flac",
-     * "mp4", "libmp3lame",
-     * "webm", "libvorbis",
-     * "avi", "libmp3lame",
-     * "mov", "aac",
-     * "mkv", "aac",
-     * "wmv", "wmav2"
-     * 
-     * );
-     * 
-     * private final Map<String, String> VIDEO_CODECS = Map.of(
-     * "mp4", "libx264",
-     * "webm", "libvpx",
-     * "avi", "mpeg4",
-     * "mov", "libx264",
-     * "mkv", "libx264",
-     * "wmv", "msmpeg4v2",
-     * "webp", "libwebp",
-     * "avif", "libaom-av1");
-     * 
-     * private final List<String> imageFormats = List.of("png", "jpg", "gif");
-     * private final Map<String, String> FORMAT_ALIAS = Map.of(
-     * "mkv", "matroska",
-     * "wmv", "asf");
-     */
 
     @Value("${app.input.path:/app/arquivos-no-docker/uploads}")
     public String inputDir;
@@ -111,66 +78,7 @@ public class FileStatusService {
         }
     }
 
-    /*
-     * @Async
-     * public void convert(File input, File output, String goalFormat, String uuid)
-     * {
-     * 
-     * ImageIO.scanForPlugins();
-     * FileStatusDTO status = hashFile.get(uuid);
-     * status.setStatus("PROCESSANDO!");
-     * status.setFileGoalFormat(goalFormat);
-     * String inputName = input.getName();
-     * String inputFormat = inputName.substring(inputName.lastIndexOf(".") + 1);
-     * BufferedImage image;
-     * 
-     * try {
-     * if (imageFormats.contains(goalFormat) &&
-     * !inputFormat.equalsIgnoreCase("avif") && !imageFormats.contains("avif")){
-     * image = ImageIO.read(input);
-     * System.out.println(image);
-     * if (goalFormat.equals("jpg") || goalFormat.equals("jpeg")) {
-     * BufferedImage rgbImage = new BufferedImage(image.getWidth(),
-     * image.getHeight(),
-     * BufferedImage.TYPE_INT_RGB);
-     * rgbImage.createGraphics().drawImage(image, 0, 0, Color.WHITE, null);
-     * image = rgbImage;
-     * 
-     * }
-     * 
-     * ImageIO.write(image, goalFormat, output);
-     * status.setDownloadUrl("/application/download/" + uuid);
-     * status.setStatus("FINALIZADO!");
-     * input.delete();
-     * return;
-     * 
-     * }
-     * 
-     * EncodingAttributes attributes = setEncodingAttributes(input, goalFormat);
-     * 
-     * MultimediaObject multimediaObjectInput = new MultimediaObject(input);
-     * 
-     * CustomFFMPEGLocator ffmpegFull = new CustomFFMPEGLocator(ffmpegPath);
-     * 
-     * Encoder encoder = new Encoder(ffmpegFull);
-     * System.out.println("Formatos de vídeo suportados pelo binário: " +
-     * Arrays.toString(encoder.getVideoEncoders()));
-     * 
-     * encoder.encode(multimediaObjectInput, output, attributes);
-     * 
-     * status.setStatus("FINALIZADO!");
-     * status.setDownloadUrl("/application/download/" + uuid);
-     * 
-     * System.out.println("Sucesso! Arquivo salvo em " + output.getAbsolutePath());
-     * System.out.println(status.getStatus());
-     * 
-     * input.delete();
-     * } catch (Exception e) {
-     * System.err.println("Erro na conversão: " + e.getMessage());
-     * }
-     * 
-     * }
-     */
+
     @Async
     public void convert(File input, File output, String goalFormat, String uuid) {
         FileStatusDTO status = hashFile.get(uuid);
