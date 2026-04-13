@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>ConverterProject</groupId>
-	<artifactId>void</artifactId>
+	<artifactId>media-converter</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>MediaConverter</name>
 	<description>Demo project for Spring Boot</description>
