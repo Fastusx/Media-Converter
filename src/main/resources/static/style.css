@@ -1,25 +1,68 @@
+html, body{
+    font-family: Arial, sans-serif;
+    height: 100%;
+    overflow: hidden;
+}
+
 body{
-    margin: 0;              
-  display: flex;            
+  margin: 0;              
   justify-content: center; 
   align-items: center;     
   min-height: 100vh;
-  background: rgb(102, 37, 0);
-  
+  background: lightgray;
 }
 
 main{
-    background-color: white;
-    color: black;
-    height: 100px;
-    padding: 15px;
-    border-radius: 5px;
-    display: flex;
+    background-color: floralwhite;
+    width: 450px;
+    padding: 40px;
+    border-radius: 12px;
+    border: 2px dashed #dcdcdc; 
+    text-align: center;
 }
+a{
+    text-decoration: none
+}
+#main-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 85vh;
+}
+
 ul{
     list-style: none;
-    border-radius: 5px;
+    gap: 2vh;
 }
+
+#header{
+    display: flex;
+    background-color: floralwhite;
+    width: 100%;
+    justify-content: space-between;
+    padding-left: 5vh;
+    border-bottom: 1px solid #DCDCDC;
+    color: #708090;
+}
+
+nav{
+    display: flex;
+    gap: 15vh;
+    margin-right: 10vh;
+    align-items: center;
+}
+nav a {
+    color: #708090;
+    font-weight: bold;
+}
+nav a:hover{
+    color: #000;
+}
+
+nav a:active{
+    color: seagreen;
+}
+
 #drag-overlay{
     position: fixed;
     display: flex;
@@ -32,7 +75,6 @@ ul{
     z-index: 9999;
     justify-content: center;
     align-items: center;
-    
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.3s ease;
@@ -52,10 +94,11 @@ ul{
 
 #file-name{
     font-weight: bold;
-    color: red;
+    color: #566f87;
 }
+
 #label-Input{
-    cursor:pointer;
+    cursor: pointer;
 }
 
 #file-Input{
@@ -68,16 +111,15 @@ ul{
 
 #btn-download{
     display: none;
-        margin-top: 20px;
-        padding: 10px;
-        background-color: #3498db;
-        color: white;
-        text-decoration: none;
-        border-radius: 5px;
-        align-items: center;
-        align-self: center;
-        justify-self: center;
+    margin-top: 5vh;
+    padding: 15px;
+    background-color: seagreen;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    justify-self: center;
 }
+
 #loading-text{
     font-size: 1.5rem;
     font-weight: bold;
@@ -88,11 +130,14 @@ ul{
 #div-loading{
     display: none;
 }
+
 #loading-container{
     gap: 25px;
-     justify-content: center;
-
+    justify-content: center;
+    align-items: center;
+    margin-top: 3vh;
 }
+
 #spinner{
     width: 40px;
     height: 40px;
@@ -110,12 +155,20 @@ ul{
 
 header{
     box-shadow: inset 0 -1px 0 rgba(0, 0, 0, .3);
-
 }
 
 .format-item button{
+    background-color: floralwhite;
+    color: dimgray;
     margin-bottom: 2px;
-    padding: 5px;
-    min-width: 150px;
+    padding: 9px;
+    min-width: 20vh;
+    font-weight: bold;
+    border-radius: 10px;
+    border: none;
+        box-shadow: inset 0 -1px 0 rgba(0, 0, 0, .3);
 }
-
+.format-item button:hover{
+    background-color: #dcdcdc;
+    color: #708090;
+}

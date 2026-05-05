@@ -74,12 +74,9 @@ async function conversionStatus(uuid) {
         fileInput.disabled = true;
         showSpinner(`${data.status}`);
         
-        
         divLoading.style.display = "block";
 
        statusTimeOut = setTimeout(() => conversionStatus(uuid), 2000);
-
-
     }
 }
 
@@ -104,7 +101,9 @@ fileInput.addEventListener("change", () => {
     }
     downloadButton.style.display = "none";
     downloadButton.href = "#";
-    formatList.style.display = "block";    
+    formatList.style.display = "flex";   
+    formatList.style.flexDirection = "column"; 
+    
     generateFormatList(category, fileFormat);
 });
 
@@ -118,8 +117,7 @@ function generateFormatList(category, fileFormat){
         newButton.innerText = `Converter para .${element}`
         newButton.addEventListener("click", () =>{
             converter(element);
-    });
-        
+    });   
         newListItem.appendChild(newButton);
         formatList.appendChild(newListItem);
     });
@@ -166,7 +164,8 @@ body.addEventListener('drop', (e) => {
         const fileType = file.type;
         const category = fileType.split('/')[0];
         const fileFormat = fileType.split('/')[1];    
-        formatList.style.display = "block";
+        formatList.style.display = "flex";
+        formatList.style.flexDirection = "column";
         
         if (fileInput.files.length> 0) {
         
@@ -181,18 +180,17 @@ body.addEventListener('drop', (e) => {
         }
         downloadButton.style.display = "none";
         downloadButton.href = "#";
-        formatList.style.display = "block";    
+        formatList.style.display = "flex";
+        formatList.style.flexDirection = "column";
         generateFormatList(category, fileFormat);
-
-    }
-     
+    }     
 });
 
 function hideSpinner(){
     loadingContainer.style.display = "none";
     main.style.height = "auto";
-
 }
+
 function showSpinner(message){
     loadingContainer.style.display = "flex";
     loadingText.style.display = "block";

@@ -7,7 +7,14 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
+<header id="header">
+    <h1>Conversor de Arquivos</h1>
+    <nav>
+        <a href="/">Home</a>
+        <a href="/">Extrair áudio</a>
+    </nav>
+</header>
+<div id="main-container">
 <main>
     <div>
     <div id="drag-overlay">
@@ -16,7 +23,7 @@
         
     <div id="file-card">
     <label id="label-Input" for="file-Input">
-        <strong>Clique para selecionar</strong> ou arraste o vídeo aqui
+        <strong>Clique para selecionar</strong> ou arraste o arquivo aqui
     </label>
     <input id="file-Input" type="file">
     <p id="file-name" style="display: none;"></p>
@@ -37,7 +44,7 @@
 
 <ul id="format-list"></ul>
 
-
+</div>
 
 
 <script src="/script.js"></script>
