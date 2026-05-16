@@ -16,6 +16,9 @@ body{
 background-color: lightgray;
 }
 
+button{
+    cursor: pointer;
+}
 .converter-mode main{
     background-color: floralwhite;
     border: 2px dashed #5b52ac; 
@@ -41,15 +44,41 @@ background-color: lightgray;
     color: seagreen;
 }
 
+.converter-mode #label-input{
+    color: black;
+}
+.converter-mode #btn-download{
+    background-color: #2e8b57;
+    color: white;
+}
+
+.converter-mode #file-name{
+    color: #566f87;
+}
+
+.converter-mode .format-item button{
+    background-color: floralwhite;
+    color: dimgray;
+}
+
+.converter-mode .format-item button:hover{
+    background-color: #dcdcdc;
+    color: black;
+}
+
+.converter-mode .format-item button:active{
+    background-color: #807c7c;
+    color: white;
+}
 
 .extract-mode{
-    background-color: MidnightBlue;
+    background-color: #6d4bb3;
 }
 
 .extract-mode #header{
-    background-color: mediumpurple;
+    background-color: #a27af3;
     color: indigo;
-    border-bottom: 1px solid #1b52b9a6;
+    border-bottom: 1px solid #B5D870;
 }
 
 .extract-mode #option-nav a{
@@ -65,9 +94,36 @@ background-color: lightgray;
     color: #310054;
 }
 
+.extract-mode #label-input{
+    color: darkblue
+}
+
+.extract-mode #btn-download{
+    background-color: #B5D870;
+    color: #5C34AB;
+}
+
 .extract-mode main{
-    background-color: mediumpurple;
-    border: 2px dashed #1b52b9a6;
+    background-color: #a27af3;
+    border: 2px dashed #B5D870;
+}
+
+.extract-mode #file-name{
+    color: #6b4fa5;
+}
+
+.extract-mode .format-item button{
+    background-color: #926ed9;
+    color: darkblue;
+}
+.extract-mode .format-item button:hover{
+    background-color: #a17fe5;
+    color: #13de78;
+}
+
+.extract-mode .format-item button:active{
+    background-color: #7b4de8;
+    color: white;
 }
 
 main{
@@ -81,6 +137,7 @@ main{
 a{
     text-decoration: none
 }
+
 #main-container{
     display: flex;
     justify-content: center;
@@ -114,7 +171,6 @@ nav a {
 
 }
 
-
 #drag-overlay{
     position: fixed;
     display: flex;
@@ -146,12 +202,12 @@ nav a {
 
 #file-name{
     font-weight: bold;
-    color: #566f87;
 }
 
 #label-Input{
     cursor: pointer;
 }
+
 
 #file-Input{
     display: none;
@@ -165,8 +221,7 @@ nav a {
     display: none;
     margin-top: 5vh;
     padding: 15px;
-    background-color: seagreen;
-    color: white;
+    font-weight: bold;    
     text-decoration: none;
     border-radius: 5px;
     justify-self: center;
@@ -211,18 +266,19 @@ header{
 }
 
 .format-item button{
-    background-color: floralwhite;
-    color: dimgray;
     margin-bottom: 2px;
     padding: 9px;
     min-width: 20vh;
     font-weight: bold;
     border-radius: 10px;
     border: none;
-        box-shadow: inset 0 -1px 0 rgba(0, 0, 0, .3);
+    box-shadow: inset 0 -1px 0 rgba(0, 0, 0, .3);
+    transition: background-color 0.4s ease, color 0.4s ease;
+
 }
+
 .format-item button:hover{
-    background-color: #dcdcdc;
-    color: #708090;
     transition: background-color 0.4s ease, color 0.4s ease;
 }
+
+

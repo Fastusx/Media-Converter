@@ -34,12 +34,21 @@ public class converterController {
 
     @PostMapping("/convert")
     public ResponseEntity<String> convert(@RequestParam("file") MultipartFile file,
-            @RequestParam("format") String fileFormat) throws IOException {
-
+            @RequestParam("format") String fileFormat, @RequestParam("isExtract") boolean isExtract) throws IOException {
         String uuid = fileStatusService.runProcess();
         File inputFile = fileStatusService.record(file, uuid);
         File outputFile = new File(outputPath + uuid + "." + fileFormat);
-        fileStatusService.convert(inputFile, outputFile, fileFormat, uuid);
+        fileStatusService.convertAndExtract(inputFile, outputFile, fileFormat, uuid,isExtract);
+        return ResponseEntity.ok(uuid);
+    }
+
+    @PostMapping("/extract-audio")
+    public ResponseEntity<String> extract (@RequestParam("file") MultipartFile file,
+            @RequestParam("format") String fileFomat, @RequestParam("isExtract") boolean isExtract){
+        String uuid = fileStatusService.runProcess();
+        File inputFile = fileStatusService.record(file,uuid);
+        File outputFile = new File(outputPath + uuid + "." + fileFomat);
+        fileStatusService.convertAndExtract(inputFile,outputFile,fileFomat, uuid, isExtract);
         return ResponseEntity.ok(uuid);
     }
 

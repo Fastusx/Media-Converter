@@ -7,6 +7,8 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.xml.transform.Source;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
@@ -80,7 +82,7 @@ public class FileStatusService {
 
 
     @Async
-    public void convert(File input, File output, String goalFormat, String uuid) {
+    public void convertAndExtract(File input, File output, String goalFormat, String uuid, boolean isExtract) {
         FileStatusDTO status = hashFile.get(uuid);
         status.setStatus("PROCESSANDO!");
         status.setFileGoalFormat(goalFormat);
@@ -88,14 +90,26 @@ public class FileStatusService {
         try {
             // terminal command line to Ffmpeg conversion
             List<String> command = new ArrayList<>();
-
             command.add(ffmpegPath);
-            command.add("-y"); // positive answer for everything
             command.add("-i"); //
             command.add(input.getAbsolutePath());
-            command.add("-pix_fmt"); // pixel format setted
-            command.add("yuv420p"); // codec
+            command.add("-y"); // 
 
+            if (!isExtract) {
+                command.add("-pix_fmt"); // pixel format setted
+                command.add("yuv420p"); // codec
+            }else {
+                command.add("-vn");
+                command.add("-acodec");
+                switch (goalFormat) {
+                    case "mp3" -> command.add("libmp3lame");
+                    case "ogg" -> command.add("libvorbis");
+                    case "flac" -> command.add("flac");
+                    case "wav" -> command.add("pcm_s16le");
+                    default ->
+                            command.add("copy");
+                }
+            }
             command.add(output.getAbsolutePath());
 
             ProcessBuilder pb = new ProcessBuilder(command);
@@ -114,20 +128,25 @@ public class FileStatusService {
             if (exitCode == 0) {
                 status.setDownloadUrl("/download/" + uuid);
                 status.setStatus("FINALIZADO!");
-                System.out.println("Conversão concluída com sucesso!");
+                String message = isExtract ? "Extração concluída com sucesso!" : "conversão conclúida com sucesso!";
+                System.out.println(message);
             } else {
-                status.setStatus("ERRO NA CONVERSÃO!");
+                String message = isExtract ? "Erro na Extração" : "Erro na Conversão";
+                status.setStatus(message);
                 System.err.println("O FFmpeg retornou erro. Código: " + exitCode);
             }
 
-            if (input.exists()) {
-                input.delete();
-            }
+
 
         } catch (Exception e) {
             status.setStatus("ERRO CRÍTICO!");
             System.err.println("Falha ao tentar rodar o FFmpeg: " + e.getMessage());
             e.printStackTrace();
+        }
+        finally {
+            if (input.exists()) {
+                input.delete();
+            }
         }
     }
 

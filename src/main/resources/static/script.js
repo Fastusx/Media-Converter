@@ -29,11 +29,14 @@ async function converter(GoalFormat) {
     canOverlay = false;
     downloadButton.style.display = "none";
     downloadButton.href = "#";
+
+    let currentMode = "conversao";
     
     let file = fileInput.files[0]
     let formData = new FormData();
     formData.append('file', file);
     formData.append('format', GoalFormat);
+    formData.append('isExtract', false);
     try{
         let res = await fetch('/convert', {
             method: 'POST',
@@ -41,9 +44,9 @@ async function converter(GoalFormat) {
         });
         if (res.ok) {
             fileInput.value = "";
-            const uuid = await res.text()
+            const uuid = await res.text();
             formatList.style.display = "none";
-            conversionStatus(uuid);
+            conversionStatus(uuid, currentMode);
         } else {
             alert("Erro ao converter o arquivo.");
         }
@@ -53,22 +56,55 @@ async function converter(GoalFormat) {
     }
 }
 
-async function conversionStatus(uuid) {
+async function extractAudio(goalFormat){
+    canOverlay = false;
+    downloadButton.style.display = "none";
+    downloadButton.href = "#";
+
+    let currentMode = "extracao";
+
+    let file = fileInput.files[0];
+    let formData = new FormData();
+    formData.append('file',file);
+    formData.append('format', goalFormat);
+    formData.append('isExtract', true);
+    try{
+        let res = await fetch('/extract-audio', {
+            method: 'POST',
+            body: formData
+        });
+        if (res.ok){
+            fileInput.value = "";
+            const uuid = await res.text();
+            formatList.style.display = "none";
+            conversionStatus(uuid, currentMode);
+        } else {
+            alert("Erro ao extrair o áudio do arquivo, tente novamente!");           
+        }
+    }   catch (error){
+        console.error("Erro durante a extração:", error);
+        alert("Ocorreu um erro durante a extração do áudio.");
+     }   
+
+}
+
+async function conversionStatus(uuid, formerMode) {
+    let currentMode = body.classList.contains("converter-mode") ? "conversao" : "extracao";
+    if (formerMode && formerMode !== currentMode){return;}
     const res = await fetch(`/status/${uuid}`);
     const data = await res.json();
     console.log("O JS leu isso aqui:", JSON.stringify(data));
-
     if (data.status === "FINALIZADO!"){
+        if (formerMode && formerMode !== currentMode){return;}
         console.trace("O botão está sendo mostrado agora por causa deste UUID:", uuid);
         hideSpinner();
         downloadButton.style.display = "block";
-        downloadButton.href = data.downloadUrl;
-        
+        downloadButton.href = data.downloadUrl;        
         labelInput.style.cursor = "pointer";
         fileInput.disabled = false;
         fileInput.value = "";
 
-        labelInput.innerHTML = `<strong>Clique para selecionar</strong> ou arraste o vídeo aqui`;
+        labelInput.innerHTML = `<strong>Clique para selecionar</strong> ou arraste o arquivo aqui`;
         
         canOverlay = true;
 
@@ -83,7 +119,7 @@ async function conversionStatus(uuid) {
         
         divLoading.style.display = "block";
 
-       statusTimeOut = setTimeout(() => conversionStatus(uuid), 2000);
+       statusTimeOut = setTimeout(() => conversionStatus(uuid, currentMode), 2000);
     }
 }
 
@@ -115,6 +151,7 @@ fileInput.addEventListener("change", () => {
 });
 
 function generateFormatList(category, fileFormat){
+    if (body.classList.contains("converter-mode")){
     const formatCategory = formatMap[category] || [];
     formatCategory.forEach(element => {
         if (element === fileFormat) return;
@@ -124,12 +161,26 @@ function generateFormatList(category, fileFormat){
         newButton.innerText = `Converter para .${element}`
         newButton.addEventListener("click", () =>{
             converter(element);
-    });   
+    }); 
+      
         newListItem.appendChild(newButton);
         formatList.appendChild(newListItem);
     });
+    } 
+    else if (body.classList.contains("extract-mode")){
+        formatMap['audio'].forEach(element => {
+        const newListItem = document.createElement('li');
+        const newButton = document.createElement('button');
+        newListItem.classList.add('format-item');
+        newButton.innerText = `Extrair para .${element}`;
+        newButton.addEventListener("click", () => {
+        extractAudio(element);
+        })
+        newListItem.appendChild(newButton);
+        formatList.appendChild(newListItem);
+    })
 };
-
+};
 //Drag n Drop
 let dragCounter = 0; 
 
@@ -209,10 +260,15 @@ function audioExtractPage(){
     body.classList.remove('converter-mode');
     body.classList.add('extract-mode');    
     logo.innerHTML = "Extrator de Áudio";
+    labelInput.style.cursor = "pointer";
+    fileInput.disabled = false;
     fileInput.accept = "video/*";
     fileInput.value = "";
     formatList.style.display = "none";
     filename.style.display = 'none';
+    hideSpinner();
+    downloadButton.style.display = "none";
+    downloadButton.href = "#";
     extractButton.innerHTML = "Converter Arquivo";
     extractButton.onclick = () => converterPage();
 }
@@ -221,10 +277,15 @@ function converterPage(){
     body.classList.remove('extract-mode');
     body.classList.add('converter-mode');
     logo.innerHTML = "Conversor de Arquivos";
+    labelInput.style.cursor = "pointer";
+    fileInput.disabled = false;
     fileInput.accept = "*/*";
     fileInput.value = "";
     formatList.style.display = "none";
     filename.style.display = 'none';
+    hideSpinner();
+    downloadButton.style.display = "none";
+    downloadButton.href = "#";
     extractButton.innerHTML = "Extrair Áudio";
     extractButton.onclick = () => audioExtractPage();
 }
