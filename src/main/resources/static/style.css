@@ -9,17 +9,75 @@ body{
   justify-content: center; 
   align-items: center;     
   min-height: 100vh;
-  background: lightgray;
+  transition: background-color 0.4s ease, box-shadow 0.4s ease;
+}
+
+.converter-mode{
+background-color: lightgray;
+}
+
+.converter-mode main{
+    background-color: floralwhite;
+    border: 2px dashed #5b52ac; 
+
+}
+
+.converter-mode #header{
+    background-color: floralwhite;
+    color: #708090;
+    border-bottom: 1px solid #DCDCDC;
+} 
+
+.converter-mode #option-nav a{
+    color: #708090;
+
+}
+
+.converter-mode #option-nav a:hover{
+    color: #000000;
+}
+
+.converter-mode #option-nav a:active{
+    color: seagreen;
+}
+
+
+.extract-mode{
+    background-color: MidnightBlue;
+}
+
+.extract-mode #header{
+    background-color: mediumpurple;
+    color: indigo;
+    border-bottom: 1px solid #1b52b9a6;
+}
+
+.extract-mode #option-nav a{
+    color: indigo;
+}
+
+
+.extract-mode #option-nav a:hover{
+    color: rgb(0, 0, 0);
+}
+
+.extract-mode #option-nav a:active{
+    color: #310054;
+}
+
+.extract-mode main{
+    background-color: mediumpurple;
+    border: 2px dashed #1b52b9a6;
 }
 
 main{
-    background-color: floralwhite;
     width: 450px;
     padding: 40px;
     border-radius: 12px;
-    border: 2px dashed #dcdcdc; 
     text-align: center;
+    transition: background-color 0.4s ease, border 0.4s ease;
 }
+
 a{
     text-decoration: none
 }
@@ -37,12 +95,10 @@ ul{
 
 #header{
     display: flex;
-    background-color: floralwhite;
     width: 100%;
     justify-content: space-between;
     padding-left: 5vh;
-    border-bottom: 1px solid #DCDCDC;
-    color: #708090;
+    transition: background-color 0.4s ease, color 0.4s ease, box-shadow 0.4s ease;
 }
 
 nav{
@@ -52,16 +108,12 @@ nav{
     align-items: center;
 }
 nav a {
-    color: #708090;
     font-weight: bold;
-}
-nav a:hover{
-    color: #000;
+    cursor: pointer;
+    transition: color 0.4s ease, box-shadow 0.4s ease;
+
 }
 
-nav a:active{
-    color: seagreen;
-}
 
 #drag-overlay{
     position: fixed;
@@ -118,6 +170,7 @@ nav a:active{
     text-decoration: none;
     border-radius: 5px;
     justify-self: center;
+    transition: background-color 0.4s ease;
 }
 
 #loading-text{
@@ -171,4 +224,5 @@ header{
 .format-item button:hover{
     background-color: #dcdcdc;
     color: #708090;
+    transition: background-color 0.4s ease, color 0.4s ease;
 }

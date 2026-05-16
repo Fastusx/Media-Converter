@@ -9,7 +9,14 @@ let loadingText = document.getElementById('loading-text');
 let divLoading = document.getElementById('div-loading');
 let loadingContainer = document.getElementById('loading-container');
 let filename = document.getElementById('file-name');
+let header = document.getElementById('header');
+let logo = document.getElementById('logo');
+let nav = document.getElementById('option-nav');
+let homeButton = document.getElementById('home-button');
+let extractButton = document.getElementById('extract-button');
+
 let canOverlay = true;
+
 
 const formatMap = {
     video: ['mp4', 'mov', 'avi', 'mkv', 'webm', 'wmv'],
@@ -196,4 +203,28 @@ function showSpinner(message){
     loadingText.style.display = "block";
     loadingText.innerHTML = `<strong>${message} <strong>...</strong></strong>`;
     main.style.height = "150px";
+}
+
+function audioExtractPage(){
+    body.classList.remove('converter-mode');
+    body.classList.add('extract-mode');    
+    logo.innerHTML = "Extrator de Áudio";
+    fileInput.accept = "video/*";
+    fileInput.value = "";
+    formatList.style.display = "none";
+    filename.style.display = 'none';
+    extractButton.innerHTML = "Converter Arquivo";
+    extractButton.onclick = () => converterPage();
+}
+
+function converterPage(){
+    body.classList.remove('extract-mode');
+    body.classList.add('converter-mode');
+    logo.innerHTML = "Conversor de Arquivos";
+    fileInput.accept = "*/*";
+    fileInput.value = "";
+    formatList.style.display = "none";
+    filename.style.display = 'none';
+    extractButton.innerHTML = "Extrair Áudio";
+    extractButton.onclick = () => audioExtractPage();
 }

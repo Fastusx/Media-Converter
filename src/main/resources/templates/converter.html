@@ -6,12 +6,12 @@
     <title>Converter arquivo</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="converter-mode">
 <header id="header">
-    <h1>Conversor de Arquivos</h1>
-    <nav>
-        <a href="/">Home</a>
-        <a href="/">Extrair áudio</a>
+    <h1 id="logo">Conversor de Arquivos</h1>
+    <nav id="option-nav">
+        <a id="home-button" href="/">Home</a>
+        <a id="extract-button" onclick="audioExtractPage()">Extrair áudio</a>
     </nav>
 </header>
 <div id="main-container">
@@ -31,7 +31,7 @@
     <a id="btn-download" href="#">
     Baixar Arquivo Convertido
 </a>
-    
+        
 <div id="loading-container">    
         <div id="div-loading">
             <div id="spinner"></div>
@@ -47,6 +47,6 @@
 </div>
 
 
-<script src="/script.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
