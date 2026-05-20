@@ -6,13 +6,15 @@ Live Demo: https://media-converter-gr5h.onrender.com/
 > ## Known limitations
 > - **Specific to Render deployment:** Due to the 512Mb RAM limit on the Render free tier, this application is, currently, best suited for small files, such as images and audio content. Large files will trigger an Out Of Memory (OOM) error.
 
-## Current features
-- **Multi-format Conversion** - Support for video, audio and image formats (e.g., .mp4, .webm, .mp3, .wav, .jpg, .avif).
-- **interactive UI/UX** - Drag n Drop support for intuitive file uploading
-- **Asynchronous Processing:** Powered by FFmpeg, allowing the server to handle tasks without blocking the main thread.
-- **UUID Tracking:** Every conversion is assigned a unique identifier for status monitoring and secure download.
-- **Automated Docker Deployment:** Fully containerized environment ensuring consistent behavior between local and cloud (Render).
-- **Live Status Check:** Endpoint dedicated to tracking the conversion progress.
+## Current Features
+- **Multi-format Conversion Mode**: Supports video, audio, and image formats (e.g., .mp4, .webm, .mp3, .wav, .jpg, .avif).
+- **Audio Extractor Mode**: A dedicated mode to extract audio tracks from video files.
+- **Interactive UI/UX**: Features Drag-and-Drop support for intuitive file uploading.
+- **Asynchronous Processing**: Powered by FFmpeg, allowing the backend to handle tasks without blocking the main thread.
+- **UUID Tracking**: Assigns a unique identifier to every session for status monitoring and secure downloads.
+- **Automated Docker Deployment**: Fully containerized environment ensuring consistent behavior between local and cloud (Render).
+- **Live Status Check**: Endpoint dedicated to tracking the conversion progress.
+  
 <hr>
 
 
