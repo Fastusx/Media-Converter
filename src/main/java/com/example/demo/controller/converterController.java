@@ -9,14 +9,11 @@ import com.example.demo.service.FileStatusService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.ModelAndView;
 
 import java.io.File;
 import java.io.IOException;
 
 @RestController
-
-
 public class converterController {
     private final FileStatusService fileStatusService;
 
@@ -27,28 +24,24 @@ public class converterController {
     @Value("${app.output.path:/app/arquivos-no-docker/convertidos}")
     public String outputPath;
 
-    @GetMapping("/")
-    public ModelAndView mainPage(){
-        return new ModelAndView("converter");
-    }
-
     @PostMapping("/convert")
     public ResponseEntity<String> convert(@RequestParam("file") MultipartFile file,
-            @RequestParam("format") String fileFormat, @RequestParam("isExtract") boolean isExtract) throws IOException {
+            @RequestParam("format") String fileFormat, @RequestParam("isExtract") boolean isExtract)
+            throws IOException {
         String uuid = fileStatusService.runProcess();
         File inputFile = fileStatusService.record(file, uuid);
         File outputFile = new File(outputPath + uuid + "." + fileFormat);
-        fileStatusService.convertAndExtract(inputFile, outputFile, fileFormat, uuid,isExtract);
+        fileStatusService.convertAndExtract(inputFile, outputFile, fileFormat, uuid, isExtract);
         return ResponseEntity.ok(uuid);
     }
 
     @PostMapping("/extract-audio")
-    public ResponseEntity<String> extract (@RequestParam("file") MultipartFile file,
-            @RequestParam("format") String fileFomat, @RequestParam("isExtract") boolean isExtract){
+    public ResponseEntity<String> extract(@RequestParam("file") MultipartFile file,
+            @RequestParam("format") String fileFomat, @RequestParam("isExtract") boolean isExtract) {
         String uuid = fileStatusService.runProcess();
-        File inputFile = fileStatusService.record(file,uuid);
+        File inputFile = fileStatusService.record(file, uuid);
         File outputFile = new File(outputPath + uuid + "." + fileFomat);
-        fileStatusService.convertAndExtract(inputFile,outputFile,fileFomat, uuid, isExtract);
+        fileStatusService.convertAndExtract(inputFile, outputFile, fileFomat, uuid, isExtract);
         return ResponseEntity.ok(uuid);
     }
 
