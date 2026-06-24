@@ -93,7 +93,7 @@ public class FileStatusService {
             command.add(ffmpegPath);
             command.add("-i"); //
             command.add(input.getAbsolutePath());
-            command.add("-y"); // 
+            command.add("-y"); //
 
             if (!isExtract) {
                 command.add("-pix_fmt"); // pixel format setted
