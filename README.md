@@ -14,7 +14,8 @@ Live Demo: https://media-converter-gr5h.onrender.com/
 - **UUID Tracking**: Assigns a unique identifier to every session for status monitoring and secure downloads.
 - **Automated Docker Deployment**: Fully containerized environment ensuring consistent behavior between local and cloud (Render).
 - **Live Status Check**: Endpoint dedicated to tracking the conversion progress.
-  
+- **Account Creation**: Screen and flow to new accounts creation with validation of required fields and coincident passwords
+- **Login/Logout**: Secure authentication via locally stored JWT tokens (`local Storage`), with dynamic switching of visual interface elements.
 <hr>
 
 
