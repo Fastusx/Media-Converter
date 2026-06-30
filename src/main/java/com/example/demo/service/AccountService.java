@@ -14,9 +14,9 @@ import com.example.demo.repository.UserRepository;
 public class AccountService {
 
     private final UserRepository userRepository;
-    private final tokenService tokenService;
+    private final TokenService tokenService;
 
-    public AccountService(UserRepository userRepository, tokenService tokenService) {
+    public AccountService(UserRepository userRepository, TokenService tokenService) {
         this.userRepository = userRepository;
         this.tokenService = tokenService;
     }

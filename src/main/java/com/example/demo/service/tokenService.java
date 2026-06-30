@@ -4,14 +4,15 @@ import java.time.Instant;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
-public class tokenService {
-    private final String secret = "minha-chave-secreta-super-protegida-123";
+public class TokenService {
+    @Value("${api.security.token.secret}")
+    private String secret;
 
     public String generateToken(String username) {
         try {
@@ -29,6 +30,6 @@ public class tokenService {
     }
 
     private Instant genExpirationDate() {
-        return LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of("-03:00"));
+        return Instant.now().plus(2, ChronoUnit.HOURS);
     }
 }
