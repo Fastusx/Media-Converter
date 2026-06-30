@@ -17,4 +17,9 @@ public class ViewController {
         return new ModelAndView("createAccount");
     }
 
+    @GetMapping("/login")
+    public ModelAndView showLoginForm() {
+        return new ModelAndView("login");
+    }
+
 }

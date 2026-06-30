@@ -1,9 +1,12 @@
 package com.example.demo.service;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import com.example.demo.model.LoginResponseDTO;
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
 
@@ -11,9 +14,11 @@ import com.example.demo.repository.UserRepository;
 public class AccountService {
 
     private final UserRepository userRepository;
+    private final tokenService tokenService;
 
-    public AccountService(UserRepository userRepository) {
+    public AccountService(UserRepository userRepository, tokenService tokenService) {
         this.userRepository = userRepository;
+        this.tokenService = tokenService;
     }
 
     public ResponseEntity<?> validateAccountCreation(String email, String username, String password,
@@ -50,8 +55,31 @@ public class AccountService {
         BCryptPasswordEncoder crypt = new BCryptPasswordEncoder();
         String hashPass = crypt.encode(password);
         User newUser = new User(email, username, hashPass);
+        userRepository.save(newUser);
 
-        return ResponseEntity.ok(userRepository.save(newUser));
+        record userResponseDTO(String username, String email) {
+        }
+        userResponseDTO response = new userResponseDTO(username, email);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    public ResponseEntity<?> login(String email, String password) {
+        User user = userRepository.findByEmail(email).orElse(null);
+        if (user == null) {
+            user = userRepository.findByUsername(email).orElse(null);
+        }
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Email ou senha incorretos");
+        }
+
+        BCryptPasswordEncoder crypt = new BCryptPasswordEncoder();
+        if (!crypt.matches(password, user.getPasswordHash())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Email ou senha incorretos.");
+        }
+
+        String token = tokenService.generateToken(user.getUsername());
+        return ResponseEntity.ok(new LoginResponseDTO(user.getUsername(), token));
     }
 
     @Scheduled(fixedRate = 180000) // 3 minutos

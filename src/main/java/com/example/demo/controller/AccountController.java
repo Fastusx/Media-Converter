@@ -1,11 +1,9 @@
 package com.example.demo.controller;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import com.example.demo.model.User;
 import com.example.demo.service.AccountService;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -35,4 +33,11 @@ public class AccountController {
         return createdUser;
 
     }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody CadastroRequest request) {
+        ResponseEntity<?> loggedUser = accountService.login(request.username(), request.password());
+        return loggedUser;
+    }
+
 }

@@ -8,7 +8,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.xml.transform.Source;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
@@ -22,7 +21,6 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class FileStatusService {
     private final Map<String, FileStatusDTO> hashFile = new ConcurrentHashMap<String, FileStatusDTO>();
-
 
     @Value("${app.input.path:/app/arquivos-no-docker/uploads}")
     public String inputDir;
@@ -80,7 +78,6 @@ public class FileStatusService {
         }
     }
 
-
     @Async
     public void convertAndExtract(File input, File output, String goalFormat, String uuid, boolean isExtract) {
         FileStatusDTO status = hashFile.get(uuid);
@@ -98,7 +95,7 @@ public class FileStatusService {
             if (!isExtract) {
                 command.add("-pix_fmt"); // pixel format setted
                 command.add("yuv420p"); // codec
-            }else {
+            } else {
                 command.add("-vn");
                 command.add("-acodec");
                 switch (goalFormat) {
@@ -107,7 +104,7 @@ public class FileStatusService {
                     case "flac" -> command.add("flac");
                     case "wav" -> command.add("pcm_s16le");
                     default ->
-                            command.add("copy");
+                        command.add("copy");
                 }
             }
             command.add(output.getAbsolutePath());
@@ -136,14 +133,11 @@ public class FileStatusService {
                 System.err.println("O FFmpeg retornou erro. Código: " + exitCode);
             }
 
-
-
         } catch (Exception e) {
             status.setStatus("ERRO CRÍTICO!");
             System.err.println("Falha ao tentar rodar o FFmpeg: " + e.getMessage());
             e.printStackTrace();
-        }
-        finally {
+        } finally {
             if (input.exists()) {
                 input.delete();
             }
