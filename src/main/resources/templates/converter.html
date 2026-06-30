@@ -10,8 +10,15 @@
 <header id="header">
     <h1 id="logo">Conversor de Arquivos</h1>
     <nav id="option-nav">
-        <a id="login-button" href="/">Login</a>
+        <div id="guest-options">
+        <a id="login-button" href="/login">Login</a>
         <a id="register-button" href="/createAccount">Registrar</a>
+        </div>
+
+        <div id="user-options" style="display: none;">
+        <span>Olá, <strong id='show-username'></strong></span>
+        <a id='logout' onclick="logout()">Sair</a>
+        </div>
         <a id="home-button" href="/">Casa</a>
         <a id="extract-button" onclick="audioExtractPage()">Extrair áudio</a>
         
@@ -50,6 +57,7 @@
 </div>
 
 
+<script src="formScript.js"></script>
 <script src="script.js"></script>
 </body>
 </html>

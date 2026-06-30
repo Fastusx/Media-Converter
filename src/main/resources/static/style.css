@@ -158,6 +158,12 @@ ul{
     transition: background-color 0.4s ease, color 0.4s ease, box-shadow 0.4s ease;
 }
 
+#guest-options, #user-options{
+    display: flex;
+    gap: 15vh;
+    align-items: center;
+}
+
 nav{
     display: flex;
     gap: 15vh;
