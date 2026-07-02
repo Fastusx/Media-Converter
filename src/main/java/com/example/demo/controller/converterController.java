@@ -1,11 +1,20 @@
 package com.example.demo.controller;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import java.net.MalformedURLException;
 import com.example.demo.model.FileStatusDTO;
+import com.example.demo.model.User;
 import com.example.demo.service.FileStatusService;
+import com.example.demo.service.RateLimitingService;
+
+import io.github.bucket4j.Bucket;
+import jakarta.servlet.http.HttpServletRequest;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,8 +26,11 @@ import java.io.IOException;
 public class converterController {
     private final FileStatusService fileStatusService;
 
-    public converterController(FileStatusService fileStatusService) {
+    private final RateLimitingService rateLimitingService;
+
+    public converterController(FileStatusService fileStatusService, RateLimitingService rateLimitingService) {
         this.fileStatusService = fileStatusService;
+        this.rateLimitingService = rateLimitingService;
     }
 
     @Value("${app.output.path:/app/arquivos-no-docker/convertidos}")
@@ -26,13 +38,44 @@ public class converterController {
 
     @PostMapping("/convert")
     public ResponseEntity<String> convert(@RequestParam("file") MultipartFile file,
-            @RequestParam("format") String fileFormat, @RequestParam("isExtract") boolean isExtract)
+            @RequestParam("format") String fileFormat, @RequestParam("isExtract") boolean isExtract,
+            Authentication authentication, HttpServletRequest request)
             throws IOException {
-        String uuid = fileStatusService.runProcess();
-        File inputFile = fileStatusService.record(file, uuid);
-        File outputFile = new File(outputPath + uuid + "." + fileFormat);
-        fileStatusService.convertAndExtract(inputFile, outputFile, fileFormat, uuid, isExtract);
-        return ResponseEntity.ok(uuid);
+        String identifier;
+        String role;
+
+        if (authentication != null && authentication.isAuthenticated()) {
+            if (authentication.getPrincipal() instanceof User userPrincipal) {
+                identifier = userPrincipal.getEmail();
+            } else {
+                identifier = authentication.getName();
+            }
+            role = authentication.getAuthorities().stream()
+                    .map(GrantedAuthority::getAuthority)
+                    .findFirst().orElse("USER");
+
+        } else {
+            identifier = request.getRemoteAddr();
+            role = "ROLE_ANONYMOUS";
+        }
+
+        Bucket bucket = rateLimitingService.resolveBucket(identifier, role);
+
+        if (bucket.tryConsume(1)) {
+            String uuid = fileStatusService.runProcess();
+            File inputFile = fileStatusService.record(file, uuid);
+            File outputFile = new File(outputPath + uuid + "." + fileFormat);
+            fileStatusService.convertAndExtract(inputFile, outputFile, fileFormat, uuid, isExtract);
+            return ResponseEntity.ok(uuid);
+        } else {
+            if (role.equals("ROLE_ANONYMOUS")) {
+                return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
+                        .body("Limite diário para visitantes atingido. Crie uma conta grátis para ganhar mais 3 conversões!");
+            } else {
+                return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
+                        .body("Limite diário para o plano gratuito atingido. Seja Premium para acesso ilimitado!");
+            }
+        }
     }
 
     @PostMapping("/extract-audio")

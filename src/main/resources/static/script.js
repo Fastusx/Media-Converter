@@ -14,6 +14,12 @@ let logo = document.getElementById('logo');
 let nav = document.getElementById('option-nav');
 let homeButton = document.getElementById('home-button');
 let extractButton = document.getElementById('extract-button');
+let popup = document.getElementById('popup')
+let popupMessage = document.getElementById('popup_message');
+let closePopup = document.getElementById('close_popup');
+
+
+let token = localStorage.getItem('token');
 
 let canOverlay = true;
 
@@ -40,6 +46,8 @@ async function converter(GoalFormat) {
     try{
         let res = await fetch('/convert', {
             method: 'POST',
+            headers:{
+            'Authorization': `Bearer ${token}`},
             body: formData
         });
         if (res.ok) {
@@ -48,8 +56,28 @@ async function converter(GoalFormat) {
             formatList.style.display = "none";
             conversionStatus(uuid, currentMode);
         } else {
-            alert("Erro ao converter o arquivo.");
+            const statusMessage = await res.text();
+            let goalText;
+            let regex
+            let anchorPhrase;
+            // Check if the status message contains specific keywords and create anchor phrases accordingly
+            if (statusMessage.includes('visitantes')) {
+                goalText = 'Crie uma conta';
+                regex = new RegExp(goalText, 'i');
+                anchorPhrase = statusMessage.replace(regex, '<a href="/createAccount">Crie uma conta</a>');
+        } else if (statusMessage.includes('Premium')){
+                goalText = 'Seja Premium';
+                regex = new RegExp(goalText, 'i');
+                anchorPhrase = statusMessage.replace(regex, '<a href="/premium">Seja Premium</a>');
         }
+                console.log(statusMessage);
+                console.log(anchorPhrase);
+                popup.style.display = 'block';
+                popupMessage.innerHTML = anchorPhrase;
+                closePopup.addEventListener('click', () => {
+                    popup.style.display = 'none';
+                });
+    }
     } catch (error) {
         console.error("Erro durante a conversão:", error);
         alert("Ocorreu um erro durante a conversão.");

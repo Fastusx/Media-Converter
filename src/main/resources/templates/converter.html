@@ -7,14 +7,18 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="converter-mode">
-<header id="header">
+<dialog id="popup" style="display: none;">
+    <p id="popup_message"></p>
+    <button id="close_popup">X</button>
+</dialog>
+    <header id="header">
     <h1 id="logo">Conversor de Arquivos</h1>
     <nav id="option-nav">
         <div id="guest-options">
         <a id="login-button" href="/login">Login</a>
         <a id="register-button" href="/createAccount">Registrar</a>
         </div>
-
+            
         <div id="user-options" style="display: none;">
         <span>Olá, <strong id='show-username'></strong></span>
         <a id='logout' onclick="logout()">Sair</a>
