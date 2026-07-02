@@ -2,7 +2,6 @@ package com.example.demo.service;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -10,16 +9,14 @@ import com.example.demo.model.LoginResponseDTO;
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class AccountService {
 
     private final UserRepository userRepository;
     private final TokenService tokenService;
-
-    public AccountService(UserRepository userRepository, TokenService tokenService) {
-        this.userRepository = userRepository;
-        this.tokenService = tokenService;
-    }
 
     public ResponseEntity<?> validateAccountCreation(String email, String username, String password,
             String confirmPassword) {
@@ -54,7 +51,7 @@ public class AccountService {
 
         BCryptPasswordEncoder crypt = new BCryptPasswordEncoder();
         String hashPass = crypt.encode(password);
-        User newUser = new User(email, username, hashPass);
+        User newUser = new User(email, username, hashPass, "USER");
         userRepository.save(newUser);
 
         record userResponseDTO(String username, String email) {
@@ -65,10 +62,8 @@ public class AccountService {
     }
 
     public ResponseEntity<?> login(String email, String password) {
-        User user = userRepository.findByEmail(email).orElse(null);
-        if (user == null) {
-            user = userRepository.findByUsername(email).orElse(null);
-        }
+        User user = getUserByUsernameOrEmail(email);
+
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Email ou senha incorretos");
         }
@@ -78,14 +73,29 @@ public class AccountService {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Email ou senha incorretos.");
         }
 
-        String token = tokenService.generateToken(user.getUsername());
+        String token = tokenService.generateToken(user);
+
         return ResponseEntity.ok(new LoginResponseDTO(user.getUsername(), token));
     }
 
-    @Scheduled(fixedRate = 180000) // 3 minutos
-    public void deleteAllUsers() {
-        System.out.println("Banco limpo!");
-        userRepository.deleteAll();
+    public User getUserByUsernameOrEmail(String username) {
+        User user = userRepository.findByUsername(username)
+                .or(() -> userRepository.findByEmail(username))
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        return user;
 
     }
+
+    public void promoteToPremium(String username) {
+        User u = getUserByUsernameOrEmail(username);
+        u.setRole("PREMIUM");
+        userRepository.save(u);
+    }
+
+    public void demoteToUser(String username) {
+        User u = getUserByUsernameOrEmail(username);
+        u.setRole("USER");
+        userRepository.save(u);
+    }
+
 }
