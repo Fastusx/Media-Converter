@@ -4,22 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
+    <link rel="stylesheet" href="formStyle.css">
 </head>
 <body>
+    <header id="header">
+    <h1 id="logo">Conversor de Arquivos</h1>
+    <nav id="option-nav">
+        <div id="guest-options">
+        <a id="create-button" href="/createAccount">Registrar</a>
+        </div>
+        <a id="home-button" href="/">Casa</a>
+    </nav>
+</header>
+    <main>
     <h1>Login</h1>
-    <form id="login-form" method="POST">
+    <form id="login-form" class="account-form" method="POST">
         <label id="login-error" class="error" style="display: none;"></label>
         
-        <label for="username">Email or Username:</label>
+        <label for="username">Email ou Nome de Usuário:</label>
         <input type="text" id="username" name="username" required>
         <label id="username-error-login" class="error" style="display: none;"></label>
         <br>
-        <label for="password">Password:</label>
+        <label for="password">Senha:</label>
         <input type="password" id="password" name="password" required>
         <label id="password-error-login" class="error" style="display: none;"></label>
         <br>
         <button type="submit">Login</button>
     </form>
 <script src="formScript.js"></script>
+</main>
 </body>
 </html>

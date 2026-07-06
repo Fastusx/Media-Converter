@@ -4,36 +4,58 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Criar Conta</title>
+    <link rel="stylesheet" href="formStyle.css">
 </head>
 <body>
+    <header id="header">
+    <h1 id="logo">Conversor de Arquivos</h1>
+    <nav id="option-nav">
+        <div id="guest-options">
+        <a id="login-button" href="/login">Login</a>
+        </div>
+        <a id="home-button" href="/">Casa</a>
+        
+    </nav>
+</header>
+<main>
     <h1>Criar Conta</h1>
-    <form id="account-create-form" method="POST">
+    <form id="account-create-form" class="account-form" method="POST" >
+        <div id="username-container" class="input-container">
         <label for="username">*Nome de Usuário:</label>
         <input type="text" id="username" name="username" required>
-        <label id="username-error" class="error" style="display: none;"></label>
+        <label id="username-error" for="username" class="error" style="display: none;"></label>
+        </div>
         
         <br><br>
         
+        
+        <div id="email-container" class="input-container">
         <label for="email">*Email:</label>
         <input type="email" id="email" name="email" required>
-        <label id="email-error" class="error" style="display: none;"></label>
+        <label id="email-error" for="email" class="error" style="display: none;"></label>
+        </div>
         
         <br><br>
         
+        <div id="password-container" class="input-container">
         <label for="password">*Senha:</label>
         <input type="password" id="password" name="password" required>
-        <label id="password-error" class="error" style="display: none;"></label>
+        <label id="password-error" for="password" class="error" style="display: none;"></label>
+        </div>
         
         <br><br>
         
+        <div id="confirmPassword-container" class="input-container">
         <label for="confirmPassword">*Confirmar Senha:</label>
         <input type="password" id="confirmPassword" name="confirmPassword" required>
-        <label id="confirmPassword-error" class="error" style="display: none;"></label>
+        <label id="confirmPassword-error" for="confirmPassword" class="error" style="display: none;"></label>
+        </div>
         
         <br><br>
         
-        <button type="submit">Criar Conta</button>
+        <button id="create-account-button" type="submit">Criar Conta</button>
     </form>
+</main>
 <script src="formScript.js"></script>
 </body>
 </html>
