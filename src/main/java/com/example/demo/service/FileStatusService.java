@@ -52,7 +52,7 @@ public class FileStatusService {
         FileStatusDTO fileStatusDTO = new FileStatusDTO();
         fileStatusDTO.setStatus("INICIANDO!");
         String uuid = UUID.randomUUID().toString();
-        fileStatusDTO.setUUID(uuid);
+        fileStatusDTO.setUuid(uuid);
         hashFile.put(uuid, fileStatusDTO);
         return uuid;
     }
