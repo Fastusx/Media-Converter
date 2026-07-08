@@ -46,7 +46,7 @@ public class AccountService {
         }
 
         if (!password.equals(confirmPassword)) {
-            return ResponseEntity.badRequest().body("A senha e a confirmação de senha não coincidem.");
+            return ResponseEntity.badRequest().body("As senhas não se coincidem.");
         }
 
         BCryptPasswordEncoder crypt = new BCryptPasswordEncoder();
@@ -81,7 +81,7 @@ public class AccountService {
     public User getUserByUsernameOrEmail(String username) {
         User user = userRepository.findByUsername(username)
                 .or(() -> userRepository.findByEmail(username))
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+                .orElse(null);
         return user;
 
     }
