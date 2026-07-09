@@ -1,5 +1,7 @@
 package com.example.demo.service;
 
+import java.io.UnsupportedEncodingException;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -8,7 +10,9 @@ import org.springframework.stereotype.Service;
 import com.example.demo.model.LoginResponseDTO;
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
+import com.example.demo.util.RandomString;
 
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -17,9 +21,10 @@ public class AccountService {
 
     private final UserRepository userRepository;
     private final TokenService tokenService;
+    private final MailService mailService;
 
     public ResponseEntity<?> validateAccountCreation(String email, String username, String password,
-            String confirmPassword) {
+            String confirmPassword) throws UnsupportedEncodingException, MessagingException {
 
         if (email == null || !email.contains("@") || email.isBlank()) {
             return ResponseEntity.badRequest().body("E-mail inválido ou mal formatado.");
@@ -50,9 +55,15 @@ public class AccountService {
         }
 
         BCryptPasswordEncoder crypt = new BCryptPasswordEncoder();
+
         String hashPass = crypt.encode(password);
-        User newUser = new User(email, username, hashPass, "USER");
+        String randomCode = RandomString.generateRandomString(64);
+
+        User newUser = new User(email, username, hashPass, "USER", randomCode, false);
+
         userRepository.save(newUser);
+
+        mailService.sendConfirmationEmail(newUser);
 
         record userResponseDTO(String username, String email) {
         }
@@ -66,6 +77,11 @@ public class AccountService {
 
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Email ou senha incorretos");
+        }
+
+        if (!user.isEnabled() || user.getVerificationCode() != null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("Conta nao verificada! Por favor verifique seu email.");
         }
 
         BCryptPasswordEncoder crypt = new BCryptPasswordEncoder();
@@ -98,4 +114,15 @@ public class AccountService {
         userRepository.save(u);
     }
 
+    public boolean verify(String verificationCode) {
+        User user = userRepository.findByVerificationCode(verificationCode).orElse(null);
+        if (user == null || user.isEnabled()) {
+            return false;
+        } else {
+            user.setEnabled(true);
+            user.setVerificationCode(null);
+            userRepository.save(user);
+            return true;
+        }
+    }
 }
