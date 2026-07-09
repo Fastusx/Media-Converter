@@ -21,7 +21,7 @@ public class MailService {
         this.emailSender = emailSender;
     }
 
-    private String verifyUrl = "http://localhost:8080/api/verify?token=";
+    private String verifyUrl = "https://media-converter-gr5h.onrender.com/api/verify?token=";
 
     public void sendConfirmationEmail(User user) throws UnsupportedEncodingException, MessagingException {
         String toAddress = user.getEmail();
